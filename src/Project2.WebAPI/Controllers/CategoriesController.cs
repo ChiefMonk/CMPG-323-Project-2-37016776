@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Project2.WebAPI.Aut;
 using Project2.WebAPI.Dtos;
 using Project2.WebAPI.Exceptions;
 using Project2.WebAPI.Services.Category;
@@ -12,6 +14,7 @@ using Project2.WebAPI.Services.Category;
 namespace Project2WebAPI.Controllers
 {
 	[Route("api/categories")]
+	[Authorize]
 	[ApiController]
 	public class CategoriesController : ControllerBase
 	{

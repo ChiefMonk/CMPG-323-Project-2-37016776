@@ -10,11 +10,25 @@ using Project2.WebAPI.Session;
 
 namespace Project2.WebAPI.Services.Category
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="Project2.WebAPI.Services.Category.DataServiceBase" />
+	/// <seealso cref="Project2.WebAPI.Services.Category.ICategoriesService" />
 	public class CategoriesService : DataServiceBase, ICategoriesService
 	{
-		public CategoriesService(ConnectedOfficeDbContext dbContext, IUserSession session):base(dbContext, session)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CategoriesService"/> class.
+		/// </summary>
+		/// <param name="webApiSettings">The web API settings.</param>
+		/// <param name="dbContext">The database context.</param>
+		/// <param name="session">The session.</param>
+		public CategoriesService(
+			IWebApiSettings webApiSettings, 
+			ConnectedOfficeDbContext dbContext, 
+			IUserSession session) : base(webApiSettings, dbContext, session)
 		{
-			
+
 		}
 
 		public async ValueTask<DtoCategory> GetCategoryByIdAsync(Guid id)
@@ -101,7 +115,7 @@ namespace Project2.WebAPI.Services.Category
 			if (id == Guid.Empty)
 			{
 				throw new MyWebApiException(
-					HttpStatusCode.BadRequest, 
+					HttpStatusCode.BadRequest,
 					$"The category-id specified is not valid (id = '{category.Id}')");
 			}
 
