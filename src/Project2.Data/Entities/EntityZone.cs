@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project2.Data.Entities
 {
+	[Table("Zone")]
 	public class EntityZone : DataEntity, IDataEntity
 	{
 		[Key]
