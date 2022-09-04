@@ -5,10 +5,10 @@ on:
     - develop
 env:
   AZURE_WEBAPP_NAME: CMPG323-37016776-Project2-WebAPI
-  AZURE_WEBAPP_PACKAGE_PATH: Project2.WebAPI/publish
+  AZURE_WEBAPP_PACKAGE_PATH: src/Project2.WebAPI/publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 3.1.x
-  WORKING_DIRECTORY: Project2.WebAPI
+  WORKING_DIRECTORY: src/Project2.WebAPI
 jobs:
   build:
     runs-on: ubuntu-latest
