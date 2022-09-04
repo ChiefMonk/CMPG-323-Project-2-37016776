@@ -16,7 +16,7 @@ namespace Project2WebAPI.Controllers
 	/// </summary>
 	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
 	[Route("api/categories")]
-	[Authorize]
+	//[Authorize]
 	[ApiController]
 	public class CategoriesController : ControllerBase
 	{
