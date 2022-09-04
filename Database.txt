@@ -1,0 +1,4 @@
+cmpg323-37016776-project2.database.windows.net
+user: admin37016776
+pass: @Hamayobe001@
+IP: 196.61.110.186

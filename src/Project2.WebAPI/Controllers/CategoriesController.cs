@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project2.WebAPI.Aut;
 using Project2.WebAPI.Dtos;
 using Project2.WebAPI.Exceptions;
 using Project2.WebAPI.Services.Category;
 
 namespace Project2WebAPI.Controllers
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
 	[Route("api/categories")]
 	[Authorize]
 	[ApiController]
@@ -20,12 +22,19 @@ namespace Project2WebAPI.Controllers
 	{
 		private readonly ICategoriesService _categoriesService;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CategoriesController"/> class.
+		/// </summary>
+		/// <param name="categoriesService">The categories service.</param>
 		public CategoriesController(ICategoriesService categoriesService)
 		{
 			_categoriesService = categoriesService;
 		}
 
-		// GET: api/categories
+		/// <summary>
+		/// Gets all category collection
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet("get-all")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(typeof(IList<DtoCategory>), StatusCodes.Status200OK)]
@@ -47,7 +56,12 @@ namespace Project2WebAPI.Controllers
 			}
 		}
 
-		// GET: api/categories/5
+
+		/// <summary>
+		/// Gets the category by identifier asynchronous.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
 		[HttpGet("get-by-id/{id}", Name = "GetCategory")]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType( StatusCodes.Status404NotFound)]
@@ -71,7 +85,11 @@ namespace Project2WebAPI.Controllers
 			}
 		}
 
-		// POST: api/categories
+		/// <summary>
+		/// Creates the category asynchronous.
+		/// </summary>
+		/// <param name="category">The category.</param>
+		/// <returns></returns>
 		[HttpPost("create")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -95,7 +113,12 @@ namespace Project2WebAPI.Controllers
 			}
 		}
 
-		// PUT: api/categories/5
+		/// <summary>
+		/// Updates the category asynchronous.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="category">The category.</param>
+		/// <returns></returns>
 		[HttpPut("update/{id}")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -124,7 +147,11 @@ namespace Project2WebAPI.Controllers
 
 
 
-		// DELETE: api/categories/5
+		/// <summary>
+		/// Deletes the category.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
 		[HttpDelete("delete/{id}")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
