@@ -17,13 +17,6 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Web API": {
-	    "commandName": "IISExpress",
-	    "launchBrowser": true,
-	    "environmentVariables": {
-		    "ASPNETCORE_ENVIRONMENT": "Development"
-	    }
-    },
     "Project2.WebAPI": {
       "commandName": "Project",
       "launchBrowser": true,

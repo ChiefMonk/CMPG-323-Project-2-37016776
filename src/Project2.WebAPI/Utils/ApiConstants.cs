@@ -1,4 +1,4 @@
-﻿namespace Project2.WebAPI.Aut
+﻿namespace Project2.WebAPI.Utils
 {
 	/// <summary>
 	/// 
@@ -15,6 +15,11 @@
 
 			/// <summary>The user</summary>
 			public const string User = "User";
+
+			/// <summary>
+			/// The admin or user
+			/// </summary>
+			public const string AdminOrUser = Admin + "," + User;
 		}
 
 		/// <summary>

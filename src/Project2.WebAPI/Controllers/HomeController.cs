@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Project2WebAPI.Controllers
+namespace Project2.WebAPI.Controllers
 {
 	/// <summary>
 	/// 

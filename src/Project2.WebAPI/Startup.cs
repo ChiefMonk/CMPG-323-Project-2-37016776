@@ -5,9 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Project2.Data;
-using Project2.WebAPI.Services.Category;
-using Project2.WebAPI.Session;
 using System.IO;
 using System.Reflection;
 using System;
@@ -15,14 +12,16 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Project2.Data.Entities;
-using Project2.WebAPI.Services.Security;
-using Project2.WebAPI.Middleware;
+using Project2.WebAPI.DAL.Entities;
+using Project2.WebAPI.DAL.Services.Category;
+using Project2.WebAPI.DAL.Services.Security;
+using Project2.WebAPI.Utils.Middleware;
+using Project2.WebAPI.Utils.Session;
 
 namespace Project2.WebAPI
 {
 	/// <summary>
-	/// 
+	/// Startup class
 	/// </summary>
 	public class Startup
 	{
@@ -64,14 +63,14 @@ namespace Project2.WebAPI
 			services.AddSingleton<IWebApiSettings>(webApiSettings);
 			services.AddScoped<IUserSession, UserSession>();
 			services.AddScoped<ISecurityService, SecurityService>();
-			services.AddScoped<ICategoriesService, CategoriesService>();
+			services.AddScoped<ICategoryService, CategoryService>();
 
 			//register database context
 			services.AddDbContext<ConnectedOfficeDbContext>(options =>
 			{
 				options.UseSqlServer(webApiSettings.SqlServerConnection,
 					sqlServerOptionsAction: sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 3); });
-				options.EnableDetailedErrors(true);
+				options.EnableDetailedErrors();
 
 			});
 
@@ -116,8 +115,7 @@ namespace Project2.WebAPI
 					{
 						Name = "Chipo Hamayobe - 37016776",
 						Url = new Uri("https://www.linkedin.com/in/chipo-hamayobe-459107247/")
-					},
-
+					}
 				});
 				
 				var jwtSecurityScheme = new OpenApiSecurityScheme
@@ -127,7 +125,6 @@ namespace Project2.WebAPI
 					In = ParameterLocation.Header,
 					Scheme = JwtBearerDefaults.AuthenticationScheme,
 					BearerFormat = "JWT",
-					//Description = "**_ONLY_** enter your JWT token in the textbox below...",
 					Description = "JWT Auth header using the Bearer scheme.\r\n\r\n Enter 'Bearer {Your_JWT_Token}'",
 
 					Reference = new OpenApiReference
@@ -163,7 +160,6 @@ namespace Project2.WebAPI
 				app.UseDeveloperExceptionPage();
 			}
 
-			//app.UseHttpsRedirection();
 			app.UseRouting();
 
 			app.UseAuthentication();

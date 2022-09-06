@@ -6,18 +6,17 @@
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Routes\" />
-  </ItemGroup>
-
 	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.28" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.28" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.28" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.28" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.28" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.28" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.3.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Project2.Data\Project2.Data.csproj" />
-  </ItemGroup>
 
 
 </Project>

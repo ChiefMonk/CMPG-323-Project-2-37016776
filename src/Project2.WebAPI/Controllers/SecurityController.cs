@@ -1,19 +1,21 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project2.WebAPI.Dtos;
-using Project2.WebAPI.Exceptions;
-using Project2.WebAPI.Services.Security;
+using Project2.WebAPI.DAL.Services.Security;
+using Project2.WebAPI.Utils;
+using Project2.WebAPI.Utils.Dtos;
+using Project2.WebAPI.Utils.Exceptions;
 
-namespace Project2WebAPI.Controllers
+namespace Project2.WebAPI.Controllers
 {
 	/// <summary>
-	/// 
+	/// The api/security controller
 	/// </summary>
 	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
 	[Route("api/security")]
+	[Authorize(Roles = ApiConstants.UserRoles.AdminOrUser)]
 	[ApiController]
 	public class SecurityController : ControllerBase
 	{
@@ -29,14 +31,15 @@ namespace Project2WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Logins a system user - admin or normal user.
+		/// logs in a system user - admin or normal user.
 		/// </summary>
 		/// <param name="username">The username.</param>
 		/// <param name="password">The password.</param>
 		/// <returns>
 		/// DtoUserAuthenticationResponse
 		/// </returns>
-		[HttpPost("login/{username}/{password}")]
+		[HttpGet("login/{username}/{password}")]
+		[AllowAnonymous]
 		[ProducesResponseType(typeof(DtoUserAuthenticationResponse), StatusCodes.Status200OK)]
 		public async ValueTask<ActionResult<DtoUserAuthenticationResponse>> LoginUserAsync(string username, string password)
 		{
@@ -66,11 +69,11 @@ namespace Project2WebAPI.Controllers
 
 
 		/// <summary>
-		/// Logs out a system user.
+		/// logs out a system user.
 		/// </summary>
 		/// <returns></returns>
 		[HttpDelete("logout")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async ValueTask<ActionResult> LogoutUserAsync()
 		{
 			try
@@ -90,11 +93,12 @@ namespace Project2WebAPI.Controllers
 
 
 		/// <summary>
-		/// Registers an admin system user.
+		/// registers an admin system user.
 		/// </summary>
 		/// <param name="request">The request.</param>
 		/// <returns></returns>
-		[HttpPost("register-admin")]
+		[HttpPost("register/admin")]
+		[AllowAnonymous]
 		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
 		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterAdminUserAsync([FromBody] DtoUserRegistrationRequest request)
 		{
@@ -115,13 +119,12 @@ namespace Project2WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Registers a normal system user.
+		/// registers a normal system user.
 		/// </summary>
 		/// <param name="request">The request.</param>
 		/// <returns>DtoUserRegistrationResponse</returns>
-		[HttpPost("register-user")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[HttpPost("register/user")]
+		[AllowAnonymous]
 		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
 		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterNormalUserAsync([FromBody] DtoUserRegistrationRequest request)
 		{
@@ -140,5 +143,36 @@ namespace Project2WebAPI.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+
+		/// <summary>
+		/// gets a particular system user by its id.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		[HttpGet("get-user-by-id/{id}", Name = "GetUser")]
+		[ProducesResponseType(typeof(DtoSystemUser), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<DtoSystemUser>> GetSystemUserByIdAsync(Guid id)
+		{
+
+			if (id == Guid.Empty)
+				return BadRequest("Please specify a valid system user id");
+
+			try
+			{
+				var user = await _securityService.GetSystemUserByIdAsync(id);
+
+				return Ok(user);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
 	}
 }
