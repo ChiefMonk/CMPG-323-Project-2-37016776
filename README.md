@@ -1,17 +1,22 @@
 # CMPG 323 Project 2
 <img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="100" /> 
 
-## Table of Contents
+### Table of Contents
 1. [Introduction](#intro)
 3. [Technology Stack](#tech)
 2. [Project Structure](#struc)
-4. [Referenced Nugets](#nuget)
+4. [Dependencies](#nuget)
 5. [Contributors](#cont)
 6. [References](#refs)
 
 <a name="intro"></a>
 ## 1. Introduction
-The overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
+This is the second project of the CMPG 323 module deliverables. This stage involves the development, testing and deployment of the following:
+* a .NET Core based WebAPI
+* Web API documentation with Swagger
+* Database with Microsoft SQL Server
+* Object Relationaal Mapping using Entity Framework Core 
+of the overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
 
 <a name="tech"></a>
 ## 2. Technology Stack
@@ -24,16 +29,24 @@ For the work to be done this semester, a single Kanban project (<a href="https:/
 However, to properly manage the project and meet the various sprint deadlines, the work is further planned and divided weekly. This also helps to negate any time challenges that could be encountered over the 2-week fixed time period.
  
 <a name="nuget"></a>
-## Referenced Nugets
-The main idea behind any branching strategy is to isolate the work into different types of branches. There are lots of ways of structuring the braches to meet various organisational and strategic needs. However, for my project, only the following resource branches will be developed:
-* <strong>main</strong> : will serve as the master branch with the most current working, relatively non-buggy code.
-* <strong>develop</strong> : will serve as the development branch code that will be merged into the <strong>main</strong> branch once properly tested. Any new work must be done on the <strong>develop</strong> 
-* <strong>release</strong> : Once a release is required for a particular environment (e.g. prod), a <strong>release</strong> branch will be created off the <strong>main</strong> branch and appropriately numbered and tagged.
-* <strong>hotfix</strong> : If an urgent bug has been discovered in a particular release or <strong>main</strong> branch, a <strong>hotfix</strong> branch will be created off that branch and the effective fix applied. Once applied, the code will then be merged back via pull-requests into the applicable branch, and where necessary also into the <strong>develop</strong> branch.
+## Dependencies
+The following nuget packages are referenced by the Project2.WebAPI project.
+
+ | Package  |  Version  |  License  |
+ | ---  |  ---  |  ---  |
+ | Microsoft.EntityFrameworkCore  |  3.1.28  |  Apache 2.0  |
+ | Microsoft.EntityFrameworkCore.SqlServer  |  3.1.28  |  Apache 2.0  |
+ | Microsoft.EntityFrameworkCore.Design  |  3.1.28  |  Apache 2.0  |
+ | Microsoft.EntityFrameworkCore.Tools  |  3.1.28  |  Apache 2.0  |
+ | Microsoft.AspNetCore.Authentication.JwtBearer  |  3.1.28  |  Apache 2.0  |
+ | Microsoft.AspNetCore.Identity  |  2.2.0  |  Apache 2.0  |
+ | Microsoft.AspNetCore.Identity.EntityFrameworkCore  |  3.1.28  |  Apache 2.0  |
+ | Microsoft.OpenApi  |  1.3.2  |  Apache 2.0  |
+ | Swashbuckle.AspNetCore  |  6.4.0  |  Apache 2.0  |
 
 <a name="cont"></a>
 ## Contributors
-* [Chipo Hamayobe](https://github.com/ChiefMonk) - Project Lead
+* [Chipo Hamayobe (37016776) - Project Lead](https://github.com/ChiefMonk) 
 
 <a name="refs"></a>
 ## References
