@@ -16,6 +16,8 @@ namespace Project2.Data
 		public virtual DbSet<EntityDevice> Device { get; set; }
 		public virtual DbSet<EntityZone> Zone { get; set; }
 
+		public virtual DbSet<EntityUserSession> UserSession { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
