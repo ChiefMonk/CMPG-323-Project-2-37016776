@@ -34,15 +34,15 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 
  | Package  |  Version  |  License  |
  | ---  |  ---  |  ---  |
- | Microsoft.EntityFrameworkCore  |  3.1.28  |  Apache 2.0  |
- | Microsoft.EntityFrameworkCore.SqlServer  |  3.1.28  |  Apache 2.0  |
- | Microsoft.EntityFrameworkCore.Design  |  3.1.28  |  Apache 2.0  |
- | Microsoft.EntityFrameworkCore.Tools  |  3.1.28  |  Apache 2.0  |
- | Microsoft.AspNetCore.Authentication.JwtBearer  |  3.1.28  |  Apache 2.0  |
- | Microsoft.AspNetCore.Identity  |  2.2.0  |  Apache 2.0  |
- | Microsoft.AspNetCore.Identity.EntityFrameworkCore  |  3.1.28  |  Apache 2.0  |
- | Microsoft.OpenApi  |  1.3.2  |  Apache 2.0  |
- | Swashbuckle.AspNetCore  |  6.4.0  |  Apache 2.0  |
+ | [Microsoft.AspNetCore.Authentication.JwtBearer](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/3.1.28/)  |  3.1.28  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.AspNetCore.Identity](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/2.2.0/)  |  2.2.0  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.AspNetCore.Identity.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore/3.1.28/)  |  3.1.28  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/3.1.28/)  |  3.1.28  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.EntityFrameworkCore.Design](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Design/3.1.28/)  |  3.1.28  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.EntityFrameworkCore.SqlServer](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer/3.1.28/)  |  3.1.28  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.EntityFrameworkCore.Tools](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools/3.1.28/)  |  3.1.28  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Microsoft.OpenApi](https://www.nuget.org/packages/Microsoft.OpenApi/1.3.2/)  |  1.3.2  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
+ | [Swashbuckle.AspNetCore](https://www.nuget.org/packages/Swashbuckle.AspNetCore/6.4.0/)  |  6.4.0  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
 
 <a name="cont"></a>
 ## Contributors
