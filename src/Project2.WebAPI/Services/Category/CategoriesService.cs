@@ -18,15 +18,15 @@ namespace Project2.WebAPI.Services.Category
 	public class CategoriesService : DataServiceBase, ICategoriesService
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CategoriesService"/> class.
+		/// Initializes a new instance of the <see cref="CategoriesService" /> class.
 		/// </summary>
-		/// <param name="webApiSettings">The web API settings.</param>
-		/// <param name="dbContext">The database context.</param>
+		/// <param name="webSettings">The web settings.</param>
+		/// <param name="officeDbContext">The office database context.</param>
 		/// <param name="session">The session.</param>
 		public CategoriesService(
-			IWebApiSettings webApiSettings, 
-			ConnectedOfficeDbContext dbContext, 
-			IUserSession session) : base(webApiSettings, dbContext, session)
+			IWebApiSettings webSettings, 
+			ConnectedOfficeDbContext officeDbContext, 
+			IUserSession session) : base(webSettings, officeDbContext, session)
 		{
 
 		}
@@ -38,7 +38,7 @@ namespace Project2.WebAPI.Services.Category
 				if (id == Guid.Empty)
 					throw new MyWebApiException(HttpStatusCode.BadRequest, $"The category-id specified is not valid (id = '{id}')");
 
-				var entity = await _dbContext.Category
+				var entity = await OfficeDbContext.Category
 					.AsNoTracking()
 					.FirstOrDefaultAsync(e => e.CategoryId == id);
 
@@ -63,7 +63,7 @@ namespace Project2.WebAPI.Services.Category
 		{
 			try
 			{
-				var entityList = await _dbContext.Category.AsNoTracking().ToListAsync();
+				var entityList = await OfficeDbContext.Category.AsNoTracking().ToListAsync();
 				return entityList.ToDtoCategoryCollection();
 			}
 			catch (MyWebApiException ex)
@@ -86,15 +86,15 @@ namespace Project2.WebAPI.Services.Category
 					throw new MyWebApiException(HttpStatusCode.BadRequest,
 						$"The category-id specified is not valid (id = '{category.Id}')");
 
-				var currentEntity = await _dbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == category.Id);
+				var currentEntity = await OfficeDbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == category.Id);
 
 				if (currentEntity != null)
 					throw new MyWebApiException(HttpStatusCode.NotFound, $"A category already exists with id = '{category.Id}'");
 
 				var entity = category.ToEntityCategory();
-				await _dbContext.Category.AddAsync(entity);
+				await OfficeDbContext.Category.AddAsync(entity);
 
-				await _dbContext.SaveChangesAsync();
+				await OfficeDbContext.SaveChangesAsync();
 			}
 			catch (MyWebApiException ex)
 			{
@@ -128,14 +128,14 @@ namespace Project2.WebAPI.Services.Category
 
 			try
 			{
-				var currentEntity = await _dbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == category.Id);
+				var currentEntity = await OfficeDbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == category.Id);
 
 				if (currentEntity == null)
 					throw new MyWebApiException(HttpStatusCode.NotFound, $"No category found with id = '{category.Id}'");
 
-				_dbContext.Entry(category.ToEntityCategory(currentEntity)).State = EntityState.Modified;
+				OfficeDbContext.Entry(category.ToEntityCategory(currentEntity)).State = EntityState.Modified;
 
-				await _dbContext.SaveChangesAsync();
+				await OfficeDbContext.SaveChangesAsync();
 			}
 			catch (MyWebApiException ex)
 			{
@@ -160,12 +160,12 @@ namespace Project2.WebAPI.Services.Category
 			var returnId = Guid.Empty;
 			try
 			{
-				var entity = await _dbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == id);
+				var entity = await OfficeDbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == id);
 
 				if (entity != null)
 				{
-					_dbContext.Category.Remove(entity);
-					await _dbContext.SaveChangesAsync();
+					OfficeDbContext.Category.Remove(entity);
+					await OfficeDbContext.SaveChangesAsync();
 					returnId = id;
 				}
 			}

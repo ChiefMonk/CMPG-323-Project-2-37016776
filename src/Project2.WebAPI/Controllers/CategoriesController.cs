@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Project2.WebAPI.Aut;
 using Project2.WebAPI.Dtos;
 using Project2.WebAPI.Exceptions;
 using Project2.WebAPI.Services.Category;
@@ -12,11 +13,11 @@ using Project2.WebAPI.Services.Category;
 namespace Project2WebAPI.Controllers
 {
 	/// <summary>
-	/// 
+	/// The api/categories controller
 	/// </summary>
 	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
 	[Route("api/categories")]
-	//[Authorize]
+	[Authorize(Roles = ApiConstants.UserRoles.Admin)]
 	[ApiController]
 	public class CategoriesController : ControllerBase
 	{
@@ -36,7 +37,6 @@ namespace Project2WebAPI.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("get-all")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(typeof(IList<DtoCategory>), StatusCodes.Status200OK)]
 		public async ValueTask<ActionResult<IList<DtoCategory>>> GetAllCategoryCollectionAsync()
 		{
@@ -52,23 +52,24 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
 
 		/// <summary>
-		/// Gets the category by identifier asynchronous.
+		/// Gets a particular category by its id.
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
 		[HttpGet("get-by-id/{id}", Name = "GetCategory")]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType( StatusCodes.Status404NotFound)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status200OK)]
 		public async ValueTask<ActionResult<DtoCategory>> GetCategoryByIdAsync(Guid id)
 		{
+
+			if(id == Guid.Empty)
+				return BadRequest("Please specify a valid category-id");
+
 			try
 			{
 				var category = await _categoriesService.GetCategoryByIdAsync(id);
@@ -81,19 +82,16 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
 		/// <summary>
-		/// Creates the category asynchronous.
+		/// Creates a category.
 		/// </summary>
 		/// <param name="category">The category.</param>
 		/// <returns></returns>
 		[HttpPost("create")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status201Created)]
 		public async ValueTask<ActionResult<DtoCategory>> CreateCategoryAsync([FromBody] DtoCategory category)
 		{
@@ -109,23 +107,23 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
 		/// <summary>
-		/// Updates the category asynchronous.
+		/// Updates a category.
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <param name="category">The category.</param>
 		/// <returns></returns>
 		[HttpPut("update/{id}")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status202Accepted)]
 		public async ValueTask<ActionResult<DtoCategory>> UpdateCategoryAsync(Guid id, [FromBody] DtoCategory category)
 		{
+			if (id == Guid.Empty)
+				return BadRequest("Please specify a valid category-id to update");
+
 			try
 			{
 				var response = await _categoriesService.UpdateCategoryAsync(id, category);
@@ -141,24 +139,24 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
 
 
 		/// <summary>
-		/// Deletes the category.
+		/// Deletes a category.
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
 		[HttpDelete("delete/{id}")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(typeof(Guid), StatusCodes.Status204NoContent)]
 		public async ValueTask<ActionResult<Guid>> DeleteCategory(Guid id)
 		{
+			if (id == Guid.Empty)
+				return BadRequest("Please specify a valid category-id to delete");
+
 			try
 			{
 				var response =  await _categoriesService.DeleteCategoryAsync(id);
@@ -174,7 +172,7 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 	}

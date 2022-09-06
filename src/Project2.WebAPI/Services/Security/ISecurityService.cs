@@ -15,13 +15,17 @@ namespace Project2.WebAPI.Services.Security
 		/// <returns>DtoUserAuthenticationResponse</returns>
 		ValueTask<DtoUserAuthenticationResponse> LoginUserAsync(DtoUserAuthenticationRequest request);
 
+		/// <summary>
+		/// Determines whether [is user session valid asynchronous].
+		/// </summary>
+		/// <returns></returns>
+		ValueTask<bool> IsUserSessionValidAsync();
 
 		/// <summary>
 		/// Logouts the user asynchronous.
 		/// </summary>
-		/// <param name="userName">Name of the user.</param>
 		/// <returns></returns>
-		ValueTask LogoutUserAsync(string userName);
+		ValueTask LogoutUserAsync();
 
 		/// <summary>
 		/// Registers the admin user asynchronous.

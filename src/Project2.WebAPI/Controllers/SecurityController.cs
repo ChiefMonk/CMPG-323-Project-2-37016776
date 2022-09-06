@@ -31,18 +31,25 @@ namespace Project2WebAPI.Controllers
 		/// <summary>
 		/// Logins a system user - admin or normal user.
 		/// </summary>
-		/// <param name="request">The request.</param>
-		/// <returns>DtoUserAuthenticationResponse</returns>
-		[HttpPost("login")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		/// <param name="username">The username.</param>
+		/// <param name="password">The password.</param>
+		/// <returns>
+		/// DtoUserAuthenticationResponse
+		/// </returns>
+		[HttpPost("login/{username}/{password}")]
 		[ProducesResponseType(typeof(DtoUserAuthenticationResponse), StatusCodes.Status200OK)]
-		public async ValueTask<ActionResult<DtoUserAuthenticationResponse>> LoginUserAsync([FromBody] DtoUserAuthenticationRequest request)
+		public async ValueTask<ActionResult<DtoUserAuthenticationResponse>> LoginUserAsync(string username, string password)
 		{
+			if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+				return BadRequest("Please enter a valid username and/or password");
+
 			try
 			{
-				var response = await _securityService.LoginUserAsync(request);
+				var response = await _securityService.LoginUserAsync(new DtoUserAuthenticationRequest
+				{
+					UserName = username,
+					Password = password,
+				});
 
 				return Ok(response);
 			}
@@ -52,7 +59,7 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
@@ -61,20 +68,14 @@ namespace Project2WebAPI.Controllers
 		/// <summary>
 		/// Logs out a system user.
 		/// </summary>
-		/// <param name="username">The username.</param>
 		/// <returns></returns>
-		[HttpDelete("logout/{username}")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[HttpDelete("logout")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async ValueTask<ActionResult> LogoutUserAsync(string username)
+		public async ValueTask<ActionResult> LogoutUserAsync()
 		{
-			if (string.IsNullOrWhiteSpace(username))
-				return BadRequest();
-
 			try
 			{
-				await _securityService.LogoutUserAsync(username);
+				await _securityService.LogoutUserAsync();
 				return Ok();
 			}
 			catch (MyWebApiException ex)
@@ -83,7 +84,7 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
@@ -94,8 +95,6 @@ namespace Project2WebAPI.Controllers
 		/// <param name="request">The request.</param>
 		/// <returns></returns>
 		[HttpPost("register-admin")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
 		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterAdminUserAsync([FromBody] DtoUserRegistrationRequest request)
 		{
@@ -111,7 +110,7 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
@@ -138,7 +137,7 @@ namespace Project2WebAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 	}

@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Project2.Data.Entities;
 using Project2.WebAPI.Services.Security;
+using Project2.WebAPI.Middleware;
 
 namespace Project2.WebAPI
 {
@@ -26,12 +27,18 @@ namespace Project2.WebAPI
 	public class Startup
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Startup"/> class.
+		/// Initializes a new instance of the <see cref="Startup" /> class.
 		/// </summary>
-		/// <param name="configuration">The configuration.</param>
-		public Startup(IConfiguration configuration)
+		/// <param name="environment">The environment.</param>
+		public Startup(IWebHostEnvironment environment)
 		{
-			Configuration = configuration;
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(environment.ContentRootPath)
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+			builder.AddEnvironmentVariables();
+
+			Configuration = builder.Build();
 		}
 
 		/// <summary>
@@ -92,7 +99,6 @@ namespace Project2.WebAPI
 					ValidIssuer = webApiSettings.JwtIssuer,
 
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(webApiSettings.JwtSecret))
-
 				};
 			});
 
@@ -101,7 +107,7 @@ namespace Project2.WebAPI
 			// add swagger documentation
 			services.AddSwaggerGen(options =>
 			{
-				options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+				options.SwaggerDoc("v2", new OpenApiInfo
 				{
 					Title = "Project 2 WebAPI",
 					Version = "v2",
@@ -109,20 +115,20 @@ namespace Project2.WebAPI
 					Contact = new OpenApiContact
 					{
 						Name = "Chipo Hamayobe - 37016776",
-						//Email = "chipo@outlook.com",
 						Url = new Uri("https://www.linkedin.com/in/chipo-hamayobe-459107247/")
 					},
 
 				});
-
+				
 				var jwtSecurityScheme = new OpenApiSecurityScheme
 				{
 					Name = "Authorization",
-					Scheme = "bearer",
-					BearerFormat = "JWT",
+					Type = SecuritySchemeType.ApiKey,
 					In = ParameterLocation.Header,
-					Type = SecuritySchemeType.Http,
-					Description = "**_ONLY_** enter your JWT token in the textbox below...",
+					Scheme = JwtBearerDefaults.AuthenticationScheme,
+					BearerFormat = "JWT",
+					//Description = "**_ONLY_** enter your JWT token in the textbox below...",
+					Description = "JWT Auth header using the Bearer scheme.\r\n\r\n Enter 'Bearer {Your_JWT_Token}'",
 
 					Reference = new OpenApiReference
 					{
@@ -157,9 +163,12 @@ namespace Project2.WebAPI
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseHttpsRedirection();
+			//app.UseHttpsRedirection();
 			app.UseRouting();
+
+			app.UseAuthentication();
 			app.UseAuthorization();
+			app.UseCustomSessionMiddleware();
 
 			app.UseEndpoints(endpoints =>
 			{

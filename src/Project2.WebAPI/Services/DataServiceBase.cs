@@ -8,21 +8,52 @@ namespace Project2.WebAPI.Services.Category
 	/// </summary>
 	public abstract class DataServiceBase
 	{
-		protected IWebApiSettings _webApiSettings;
-		protected ConnectedOfficeDbContext _dbContext;
-		protected IUserSession _session;
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DataServiceBase" /> class.
+		/// </summary>
+		/// <param name="webSettings">The web settings.</param>
+		/// <param name="officeDbContext">The office database context.</param>
+		/// <param name="session">The session.</param>
+		protected DataServiceBase(IWebApiSettings webSettings, ConnectedOfficeDbContext officeDbContext, IUserSession session)
+		{
+			WebSettings = webSettings;
+			OfficeDbContext = officeDbContext;
+			Session = session;
+		}
+
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DataServiceBase"/> class.
+		/// Gets the web API settings.
 		/// </summary>
-		/// <param name="webApiSettings">The web API settings.</param>
-		/// <param name="dbContext">The database context.</param>
-		/// <param name="session">The session.</param>
-		protected DataServiceBase(IWebApiSettings webApiSettings, ConnectedOfficeDbContext dbContext, IUserSession session)
+		/// <value>
+		/// The web API settings.
+		/// </value>
+		protected IWebApiSettings WebSettings
 		{
-			_webApiSettings = webApiSettings;
-			_dbContext = dbContext;
-			_session = session;
+			get;
+		}
+
+		/// <summary>
+		/// Gets the session.
+		/// </summary>
+		/// <value>
+		/// The session.
+		/// </value>
+		protected IUserSession Session
+		{
+			get;
+		}
+
+
+		/// <summary>
+		/// Gets the office database context.
+		/// </summary>
+		/// <value>
+		/// The office database context.
+		/// </value>
+		protected ConnectedOfficeDbContext OfficeDbContext
+		{
+			get;
 		}
 	}
 }

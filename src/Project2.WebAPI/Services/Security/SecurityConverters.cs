@@ -18,13 +18,13 @@ namespace Project2.WebAPI.Services.Security
 
 			return new DtoUserAuthenticationResponse
 			{
-				User = entity.ToDtoSystemUser(),
+				User = entity.ToDtoSystemUser(roleName),
 				JwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
 				JwtExpiry = jwtSecurityToken.ValidTo.ToString("yyyy-MM-dd HH:mm:ss")
 			};
 		}
 
-		internal static DtoSystemUser ToDtoSystemUser(this EntitySystemUser entity, string roleName = "")
+		internal static DtoSystemUser ToDtoSystemUser(this EntitySystemUser entity, string roleName)
 		{
 			if (entity == null)
 				return null;
@@ -49,7 +49,7 @@ namespace Project2.WebAPI.Services.Security
 
 			foreach (var entity in entityList)
 			{
-				var dto = entity.ToDtoSystemUser();
+				var dto = entity.ToDtoSystemUser("");
 				if (dto != null)
 					dtoList.Add(dto);
 			}

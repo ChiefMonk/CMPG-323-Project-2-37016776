@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Project2.Data;
 using Project2.Data.Entities;
@@ -15,7 +16,6 @@ using Project2.WebAPI.Dtos;
 using Project2.WebAPI.Exceptions;
 using Project2.WebAPI.Services.Category;
 using Project2.WebAPI.Session;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Project2.WebAPI.Services.Security
 {
@@ -30,28 +30,25 @@ namespace Project2.WebAPI.Services.Security
 			"Incorrect password and/ password. Please correct and try again");
 
 		private readonly SignInManager<EntitySystemUser> _signInManager;
-		private readonly UserManager<EntitySystemUser> _userManager;
+	//	private readonly UserManager<EntitySystemUser> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SecurityService" /> class.
 		/// </summary>
-		/// <param name="webApiSettings">The web API settings.</param>
-		/// <param name="dbContext">The database context.</param>
+		/// <param name="webSettings">The web settings.</param>
+		/// <param name="officeDbContext">The office database context.</param>
 		/// <param name="session">The session.</param>
 		/// <param name="signInManager">The sign in manager.</param>
-		/// <param name="userManager">The user manager.</param>
 		/// <param name="roleManager">The role manager.</param>
 		public SecurityService(
-			IWebApiSettings webApiSettings,
-			ConnectedOfficeDbContext dbContext,
+			IWebApiSettings webSettings,
+			ConnectedOfficeDbContext officeDbContext,
 			IUserSession session,
 			SignInManager<EntitySystemUser> signInManager,
-			UserManager<EntitySystemUser> userManager,
-			RoleManager<IdentityRole> roleManager) : base(webApiSettings, dbContext, session)
+			RoleManager<IdentityRole> roleManager) : base(webSettings, officeDbContext, session)
 		{
 			_signInManager = signInManager;
-			_userManager = userManager;
 			_roleManager = roleManager;
 		}
 
@@ -64,60 +61,93 @@ namespace Project2.WebAPI.Services.Security
 		/// </returns>
 		public async ValueTask<DtoUserAuthenticationResponse> LoginUserAsync(DtoUserAuthenticationRequest request)
 		{
-			var systemUser = await _userManager.FindByNameAsync(request.Username);
+			if (string.IsNullOrWhiteSpace(request.UserName))
+				throw new MyWebApiException(HttpStatusCode.BadRequest,
+					"Please specify a valid username");
+
+			if (string.IsNullOrWhiteSpace(request.Password))
+				throw new MyWebApiException(HttpStatusCode.BadRequest,
+					"Please specify a valid password");
+
+			var systemUser = await _signInManager.UserManager.FindByNameAsync(request.UserName);
 			if (systemUser == null)
 				throw FailedLogin;
-
-		//	var isValidUser = await _userManager.CheckPasswordAsync(systemUser, request.Password);
-		//	if (!isValidUser)
-			//	throw FailedLogin;
 
 			var result = await _signInManager.PasswordSignInAsync(systemUser, request.Password, isPersistent: false, lockoutOnFailure: false);
 
 			if (!result.Succeeded)
 				throw FailedLogin;
 
+			var rolesList = await _signInManager.UserManager.GetRolesAsync(systemUser);
+			var roleName = rolesList.FirstOrDefault() ?? ApiConstants.UserRoles.User;
+
+			// create user session
+			var userSession = new EntityUserSession
+			{
+				SessionId = Guid.NewGuid(),
+				DateCreated = DateTime.UtcNow,
+				LogoutDate = null,
+			};
+			await OfficeDbContext.UserSession.AddAsync(userSession);
+			await OfficeDbContext.SaveChangesAsync();
 
 			var claimList = new List<Claim>()
 			{
-				new Claim(ClaimTypes.Name, systemUser.UserName),
-				new Claim(ClaimTypes.Email, systemUser.Email),
-				new Claim(ClaimTypes.MobilePhone, systemUser.PhoneNumber),
-				new Claim(JwtRegisteredClaimNames.UniqueName, systemUser.UserName),
-				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+				new Claim(ApiConstants.UserClaims.UserName, systemUser.UserName),
+				new Claim(ApiConstants.UserClaims.EmailAddress, systemUser.Email),
+				new Claim(ApiConstants.UserClaims.PhoneNumber, systemUser.PhoneNumber),
+				new Claim(ApiConstants.UserClaims.GivenName, systemUser.UserName),
+				new Claim(ApiConstants.UserClaims.Role, roleName),
+				new Claim(ApiConstants.UserClaims.SessionToken, userSession.SessionId.ToString()),
 			};
 
-			var rolesList = await _userManager.GetRolesAsync(systemUser);
-
-			foreach (var role in rolesList)
-			{
-				claimList.Add(new Claim(ClaimTypes.Role, role));
-			}
 
 			var token = new JwtSecurityToken(
-				issuer: _webApiSettings.JwtIssuer,
-				audience: _webApiSettings.JwtAudience,
+				issuer: WebSettings.JwtIssuer,
+				audience: WebSettings.JwtAudience,
 				expires: DateTime.Now.AddHours(5), // expires after 5 hours
 				claims: claimList,
 				signingCredentials: new SigningCredentials(
-					key: new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_webApiSettings.JwtSecret)),
+					key: new SymmetricSecurityKey(Encoding.UTF8.GetBytes(WebSettings.JwtSecret)),
 					algorithm: SecurityAlgorithms.HmacSha256)
 			);
 
 			await _signInManager.SignInAsync(systemUser, false);
-			return systemUser.ToDtoSystemUser(rolesList.FirstOrDefault(), token);
+			return systemUser.ToDtoSystemUser(roleName, token);
 		}
 
 
 		/// <summary>
-		/// Logs out the user asynchronous.
+		/// Log outs the user asynchronous.
 		/// </summary>
-		/// <param name="userName">Name of the user.</param>
 		/// <returns></returns>
-		public async ValueTask LogoutUserAsync(string userName)
+		public async ValueTask LogoutUserAsync()
 		{
-			await _signInManager.UserManager.FindByNameAsync(userName);
+			var currentSession = await OfficeDbContext.UserSession.AsTracking().FirstOrDefaultAsync(e => e.SessionId == Session.SessionToken);
+
+			if (currentSession != null)
+			{
+				currentSession.LogoutDate = DateTime.UtcNow;
+				OfficeDbContext.Entry(currentSession).State = EntityState.Modified;
+				await OfficeDbContext.SaveChangesAsync();
+			}
+
 			await _signInManager.SignOutAsync();
+		}
+
+		/// <summary>
+		/// Determines whether [is user session valid asynchronous].
+		/// </summary>
+		/// <returns>
+		///   <c>true</c> if [is user session valid asynchronous]; otherwise, <c>false</c>.
+		/// </returns>
+		public async ValueTask<bool> IsUserSessionValidAsync()
+		{
+			var currentSession = await OfficeDbContext.UserSession
+				.AsNoTracking()
+				.FirstOrDefaultAsync(e => e.SessionId == Session.SessionToken);
+
+			return (currentSession != null && currentSession.LogoutDate == null);
 		}
 
 		/// <summary>
@@ -127,7 +157,7 @@ namespace Project2.WebAPI.Services.Security
 		/// <returns></returns>
 		public async ValueTask<DtoUserRegistrationResponse> RegisterAdminUserAsync(DtoUserRegistrationRequest request)
 		{
-			return await CreateUserAsync(request, UserRoles.Admin);
+			return await CreateUserAsync(request, ApiConstants.UserRoles.Admin);
 		}
 
 		/// <summary>
@@ -137,7 +167,7 @@ namespace Project2.WebAPI.Services.Security
 		/// <returns></returns>
 		public async ValueTask<DtoUserRegistrationResponse> RegisterNormalUserAsync(DtoUserRegistrationRequest request)
 		{
-			return await CreateUserAsync(request, UserRoles.User);
+			return await CreateUserAsync(request, ApiConstants.UserRoles.User);
 		}
 
 		#region Privates
@@ -148,28 +178,50 @@ namespace Project2.WebAPI.Services.Security
 		/// <param name="request">The request.</param>
 		/// <param name="roleName">Name of the role.</param>
 		/// <returns></returns>
-		/// <exception cref="MyWebApiException">
-		/// The Username specified is not valid. Please correct and try again
+		/// <exception cref="Project2.WebAPI.Exceptions.MyWebApiException">
+		/// Please specify a valid username
+		/// or
+		/// Please specify a valid password
+		/// or
+		/// Please specify a valid email address
+		/// or
+		/// Please specify a valid phone number
 		/// or
 		/// A system user already exists with username = '{request.UserName}'
 		/// or
 		/// </exception>
+		/// <exception cref="MyWebApiException">The Username specified is not valid. Please correct and try again
+		/// or
+		/// A system user already exists with username = '{request.UserName}'
+		/// or</exception>
 		private async ValueTask<DtoUserRegistrationResponse> CreateUserAsync(DtoUserRegistrationRequest request, string roleName)
 		{
 			try
 			{
 				if (string.IsNullOrWhiteSpace(request.UserName))
 					throw new MyWebApiException(HttpStatusCode.BadRequest,
-						$"The Username specified is not valid. Please correct and try again");
+						"Please specify a valid username");
 
-				var currentUser = await _userManager.FindByNameAsync(request.UserName);
+				if (string.IsNullOrWhiteSpace(request.Password))
+					throw new MyWebApiException(HttpStatusCode.BadRequest,
+						"Please specify a valid password");
+
+				if (string.IsNullOrWhiteSpace(request.EmailAddress))
+					throw new MyWebApiException(HttpStatusCode.BadRequest,
+						"Please specify a valid email address");
+
+				if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+					throw new MyWebApiException(HttpStatusCode.BadRequest,
+						"Please specify a valid phone number");
+
+				var currentUser = await _signInManager.UserManager.FindByNameAsync(request.UserName);
 				if (currentUser != null)
 					throw new MyWebApiException(HttpStatusCode.BadRequest,
 						$"A system user already exists with username = '{request.UserName}'");
 
 				var systemUser = request.ToEntitySystemUser();
 
-				var result = await _userManager.CreateAsync(systemUser, request.Password);
+				var result = await _signInManager.UserManager.CreateAsync(systemUser, request.Password);
 
 				if (!result.Succeeded)
 				{
@@ -199,7 +251,7 @@ namespace Project2.WebAPI.Services.Security
 				}
 
 				// add the user to this role
-				await _userManager.AddToRoleAsync(systemUser, roleName);
+				await _signInManager.UserManager.AddToRoleAsync(systemUser, roleName);
 
 				return new DtoUserRegistrationResponse
 				{

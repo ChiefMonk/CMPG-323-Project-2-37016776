@@ -3,3 +3,16 @@ user: admin37016776
 pass: @Hamayobe001@
 IP: 196.61.110.186
 https://cmpg323-37016776-project2-webapi.azurewebsites.net
+https://cmpg323-37016776-project2-webapi-management.azure-api.net/
+
+DROP TABLE [dbo].[UserSession];
+CREATE TABLE [dbo].[UserSession](
+	[SessionID] [uniqueidentifier] NOT NULL,
+	[DateCreated] [datetime] NOT NULL,
+	[LogoutDate] [datetime] NULL,	
+ CONSTRAINT [PK_UserSession] PRIMARY KEY CLUSTERED 
+(
+	[SessionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)
+GO

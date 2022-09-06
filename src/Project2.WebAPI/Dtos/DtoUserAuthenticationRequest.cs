@@ -11,7 +11,7 @@ namespace Project2.WebAPI.Dtos
 		/// <summary>Gets or sets the username.</summary>
 		/// <value>The username.</value>
 		[Required(ErrorMessage = "The user name is required")]
-		public string Username { get; set; }
+		public string UserName { get; set; }
 
 		/// <summary>Gets or sets the password.</summary>
 		/// <value>The password.</value>
