@@ -1,4 +1,4 @@
-# CMPG 323 Project 2
+# CMPG 323 Project 2 : IoT Device Management System
 <img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="100" /> 
 
 ### Table of Contents
@@ -11,7 +11,13 @@
 
 <a name="intro"></a>
 ## 1. Introduction
-This is the second project of the CMPG 323 module deliverables. This stage involves the development, testing and deployment of the following:
+This is the second project of the CMPG 323 module deliverables. Smart devices such as voice controllers, security lights, smart locks and Wi-Fi-enabled devices can communicate and exchange data over the Internet. Devices form distributed ecosystems that can perform environmental monitoring of homes and buildings.
+
+An IoT Device Management System keeps track of the whereabouts of all IoT devices deployed by the organisation. Depending on the type of organisation, different categories of devices are used. Each IoT device is initially categorised and registered. Then, IoT devices are deployed throughout the organisation's buildings in predefined zones. Administrators can view all IoT devices, update their properties, add new devices and move them to other zones.
+
+
+
+This stage involves the development, testing and deployment of the following:
 * a .NET Core based WebAPI
 * Web API documentation with Swagger
 * Database with Microsoft SQL Server
@@ -20,6 +26,7 @@ of the overview document explains the overall project structure for the semester
 
 <a name="tech"></a>
 ## 2. Technology Stack
+Representational State Transfer (REST) is a model and architectural style for web services over HTTP. When this model is used for API design, IoT devices can be managed using the Cloud. Therefore, the IoT Device Management System should be implemented as a set of RESTful APIs.
 The overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
 
 <a name="struc"></a>
@@ -46,7 +53,7 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 
 <a name="cont"></a>
 ## Contributors
-* [Chipo Hamayobe (37016776) - Project Lead](https://github.com/ChiefMonk) 
+* [Chipo Hamayobe (37016776)](https://github.com/ChiefMonk) - Project Lead
 
 <a name="refs"></a>
 ## References

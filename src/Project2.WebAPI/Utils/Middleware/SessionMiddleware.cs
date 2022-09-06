@@ -4,16 +4,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Project2.WebAPI.DAL.Services.Security;
+using Microsoft.EntityFrameworkCore;
+using Project2.WebAPI.DAL;
 using Project2.WebAPI.Utils.Session;
 
 namespace Project2.WebAPI.Utils.Middleware
 {
 
-	/// <summary>
-	/// SessionMiddleware class
-	/// </summary>
-	public class SessionMiddleware
+    /// <summary>
+    /// SessionMiddleware class
+    /// </summary>
+    public class SessionMiddleware
 	{
 		private readonly RequestDelegate _next;
 
@@ -31,9 +32,9 @@ namespace Project2.WebAPI.Utils.Middleware
 		/// Invokes the specified HTTP context.
 		/// </summary>
 		/// <param name="httpContext">The HTTP context.</param>
-		/// <param name="securityService">The security service.</param>
+		/// <param name="officeDbContext">The office database context.</param>
 		/// <param name="session">The session.</param>
-		public async Task Invoke(HttpContext httpContext, ISecurityService securityService, IUserSession session)
+		public async Task Invoke(HttpContext httpContext, ConnectedOfficeDbContext officeDbContext, IUserSession session)
 		{
 			if (httpContext?.User?.Identity != null && httpContext.User.Identity.IsAuthenticated)
 			{
@@ -49,8 +50,11 @@ namespace Project2.WebAPI.Utils.Middleware
 						session.SessionToken = Guid.Parse(sessionKey);
 					session.Role = identity.FindFirst(ApiConstants.UserClaims.Role)?.Value;
 				}
+				var isActive = await officeDbContext.UserSession
+					.AsNoTracking()
+					.AnyAsync(e => e.SessionId == session.SessionToken && e.LogoutDate == null);
 
-				if (session.SessionToken == Guid.Empty || !await securityService.IsUserSessionValidAsync())
+				if (session.SessionToken == Guid.Empty || !isActive)
 				{
 					httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
 					httpContext.Response.ContentType = "text/plain";

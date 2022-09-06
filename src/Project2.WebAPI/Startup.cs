@@ -13,10 +13,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Project2.WebAPI.DAL.Entities;
-using Project2.WebAPI.DAL.Services.Category;
-using Project2.WebAPI.DAL.Services.Security;
 using Project2.WebAPI.Utils.Middleware;
 using Project2.WebAPI.Utils.Session;
+using Project2.WebAPI.DAL;
 
 namespace Project2.WebAPI
 {
@@ -62,8 +61,6 @@ namespace Project2.WebAPI
 			//register services
 			services.AddSingleton<IWebApiSettings>(webApiSettings);
 			services.AddScoped<IUserSession, UserSession>();
-			services.AddScoped<ISecurityService, SecurityService>();
-			services.AddScoped<ICategoryService, CategoryService>();
 
 			//register database context
 			services.AddDbContext<ConnectedOfficeDbContext>(options =>

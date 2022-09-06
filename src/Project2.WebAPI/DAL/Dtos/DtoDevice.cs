@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Project2.WebAPI.Utils.Dtos
+namespace Project2.WebAPI.DAL.Dtos
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <seealso cref="Project2.WebAPI.Utils.Dtos.Dto" />
-	/// <seealso cref="Project2.WebAPI.Utils.Dtos.IDto" />
+	/// <seealso cref="Dto" />
+	/// <seealso cref="IDto" />
 	public class DtoDevice : Dto, IDto
 	{
 		/// <summary>

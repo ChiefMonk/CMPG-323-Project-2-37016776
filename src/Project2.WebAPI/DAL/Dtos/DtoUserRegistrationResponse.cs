@@ -1,4 +1,4 @@
-﻿namespace Project2.WebAPI.Utils.Dtos
+﻿namespace Project2.WebAPI.DAL.Dtos
 {
 
 	/// <summary>

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Project2.WebAPI.Utils.Dtos
+namespace Project2.WebAPI.DAL.Dtos
 {
 	/// <summary>
 	///   <br />

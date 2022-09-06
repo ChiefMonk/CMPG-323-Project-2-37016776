@@ -1,36 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project2.WebAPI.DAL.Services.Category;
+using Microsoft.EntityFrameworkCore;
+using Project2.WebAPI.DAL;
+using Project2.WebAPI.DAL.Converters;
+using Project2.WebAPI.DAL.Dtos;
 using Project2.WebAPI.Utils;
-using Project2.WebAPI.Utils.Dtos;
 using Project2.WebAPI.Utils.Exceptions;
 
 namespace Project2.WebAPI.Controllers
 {
-	/// <summary>
-	/// The api/categories controller
-	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
-	[Route("api/categories")]
+    /// <summary>
+    /// The api/categories controller
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
+    [Route("api/categories")]
 	[Authorize(Roles = ApiConstants.UserRoles.Admin)]
 	[ApiController]
 	public class CategoryController : ControllerBase
 	{
-		private readonly ICategoryService _categoryService;
+		private const string ErrorInvalidCategoryId = "Please specify a valid category-id";
+		private const string ErrorCategoryNotExit = "This category does not exist";
 
+		private readonly ConnectedOfficeDbContext _officeDbContext;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="CategoryController"/> class.
+		/// Initializes a new instance of the <see cref="CategoryController" /> class.
 		/// </summary>
-		/// <param name="categoryService">The category service.</param>
-		public CategoryController(ICategoryService categoryService)
+		/// <param name="officeDbContext">The office database context.</param>
+		public CategoryController(ConnectedOfficeDbContext officeDbContext)
 		{
-			_categoryService = categoryService;
+			_officeDbContext = officeDbContext;
 		}
 
 		/// <summary>
@@ -43,7 +48,8 @@ namespace Project2.WebAPI.Controllers
 		{
 			try
 			{
-				var response =  await _categoryService.GetAllCategoryCollectionAsync();
+				var entityList = await _officeDbContext.Category.AsNoTracking().ToListAsync();
+				var response = entityList.ToDtoCategoryCollection();
 
 				return Ok(response);
 			}
@@ -63,19 +69,25 @@ namespace Project2.WebAPI.Controllers
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
-		[HttpGet("get-by-id/{id}", Name = "GetCategory")]
+		[HttpGet("get/{id}", Name = "GetCategory")]
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status200OK)]
 		public async ValueTask<ActionResult<DtoCategory>> GetCategoryByIdAsync(Guid id)
 		{
-
 			if(id == Guid.Empty)
-				return BadRequest("Please specify a valid category-id");
+				return BadRequest(ErrorInvalidCategoryId);
 
 			try
 			{
-				var category = await _categoryService.GetCategoryByIdAsync(id);
+				var entity = await _officeDbContext.Category
+					.AsNoTracking()
+					.FirstOrDefaultAsync(e => e.CategoryId == id);
 
-				return Ok(category);
+				if (entity == null)
+					throw new MyWebApiException(HttpStatusCode.NotFound, $"No category with id = '{id}' has been found");
+
+				var response = entity.ToDtoCategory();
+
+				return Ok(response);
 			}
 			catch (MyWebApiException ex)
 			{
@@ -88,6 +100,41 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
+		/// gets the number of zones with devices linked to a category.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		[HttpGet("number-of-zones-by-category/{id}")]
+		[ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<int>> GetNumberOfZonesByCategoryIdAsync(Guid id)
+		{
+			if (id == Guid.Empty)
+				return BadRequest(ErrorInvalidCategoryId);
+
+			try
+			{
+				var zoneCount = await (from z in _officeDbContext.Zone.AsNoTracking()
+					join d in _officeDbContext.Device.AsNoTracking() on z.ZoneId equals d.ZoneId
+					where d.CategoryId == id
+					select new
+					{
+						z.ZoneId
+					}).CountAsync();
+
+				return Ok(zoneCount);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+
+		/// <summary>
 		/// Creates a category.
 		/// </summary>
 		/// <param name="category">The category.</param>
@@ -96,11 +143,20 @@ namespace Project2.WebAPI.Controllers
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status201Created)]
 		public async ValueTask<ActionResult<DtoCategory>> CreateCategoryAsync([FromBody] DtoCategory category)
 		{
+			if (category.Id == Guid.Empty)
+				return BadRequest(ErrorInvalidCategoryId);
+
 			try
 			{
-				var response =  await _categoryService.CreateCategoryAsync(category);
+				var exists = await DoesCategoryExistAsync(category.Id);
+				if (exists)
+					return BadRequest("A category with the same id already exists");
 
-				return Created(new Uri(Url.Link("GetCategory", new { id = category.Id })), response);
+				var entity = category.ToEntityCategory();
+				await _officeDbContext.Category.AddAsync(entity);
+				await _officeDbContext.SaveChangesAsync();
+
+				return Created(new Uri(Url.Link("GetCategory", new { id = category.Id })), category.ToEntityCategory());
 			}
 			catch (MyWebApiException ex)
 			{
@@ -122,16 +178,22 @@ namespace Project2.WebAPI.Controllers
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status202Accepted)]
 		public async ValueTask<ActionResult<DtoCategory>> UpdateCategoryAsync(Guid id, [FromBody] DtoCategory category)
 		{
-			if (id == Guid.Empty)
-				return BadRequest("Please specify a valid category-id to update");
+			if (id == Guid.Empty || id != category.Id)
+				return BadRequest(ErrorInvalidCategoryId);
 
 			try
 			{
-				var response = await _categoryService.UpdateCategoryAsync(id, category);
+				var exists = await DoesCategoryExistAsync(id);
+				if (!exists)
+					return BadRequest(ErrorCategoryNotExit);
 
-				return new ObjectResult(response)
+				var entity = await _officeDbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == category.Id);
+				_officeDbContext.Entry(category.ToEntityCategory(entity)).State = EntityState.Modified;
+				await _officeDbContext.SaveChangesAsync();
+
+				return new ObjectResult(await GetCategoryByIdAsync(id))
 				{
-					StatusCode = (int)HttpStatusCode.Accepted
+					StatusCode = StatusCodes.Status202Accepted
 				};
 			}
 			catch (MyWebApiException ex)
@@ -156,16 +218,31 @@ namespace Project2.WebAPI.Controllers
 		public async ValueTask<ActionResult<Guid>> DeleteCategory(Guid id)
 		{
 			if (id == Guid.Empty)
-				return BadRequest("Please specify a valid category-id to delete");
+				return BadRequest(ErrorInvalidCategoryId);
 
 			try
 			{
-				var response =  await _categoryService.DeleteCategoryAsync(id);
+				var exists = await DoesCategoryExistAsync(id);
+				if (!exists)
+					return BadRequest(ErrorCategoryNotExit);
 
-				return new ObjectResult(response)
+				//check if category has devices assigned
+				var hasDevices = await _officeDbContext.Device.AsTracking().AnyAsync(e => e.CategoryId == id);
+				if (hasDevices)
 				{
-					StatusCode = (int)HttpStatusCode.NoContent
-				};
+					throw new MyWebApiException(HttpStatusCode.Forbidden,
+						"You can not delete this category because it has devices assigned to it");
+				}
+
+				var entity = await _officeDbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == id);
+
+				if (entity != null)
+				{
+					_officeDbContext.Category.Remove(entity);
+					await _officeDbContext.SaveChangesAsync();
+				}
+
+				return StatusCode(StatusCodes.Status204NoContent, "The category has been deleted successfully");
 			}
 			catch (MyWebApiException ex)
 			{
@@ -176,5 +253,19 @@ namespace Project2.WebAPI.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		#region Privates
+
+		/// <summary>
+		/// Does the category exist asynchronous.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		private async ValueTask<bool> DoesCategoryExistAsync(Guid id)
+		{
+			return await _officeDbContext.Category.AsTracking().AnyAsync(e => e.CategoryId == id);
+		}
+
+		#endregion
 	}
 }
