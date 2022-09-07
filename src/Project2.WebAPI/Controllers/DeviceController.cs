@@ -217,10 +217,13 @@ namespace Project2.WebAPI.Controllers
 					return BadRequest(ErrorDeviceNotExit);
 
 				var entity = await _officeDbContext.Device.AsTracking().FirstOrDefaultAsync(e => e.DeviceId == device.Id);
-				_officeDbContext.Entry(device.ToEntityDevice(entity)).State = EntityState.Modified;
+
+				var updated = device.ToEntityDevice(entity);
+
+				_officeDbContext.Entry(updated).State = EntityState.Modified;
 				await _officeDbContext.SaveChangesAsync();
 
-				return new ObjectResult(await GetDeviceByIdAsync(id))
+				return new ObjectResult(updated)
 				{
 					StatusCode = StatusCodes.Status202Accepted
 				};

@@ -188,10 +188,13 @@ namespace Project2.WebAPI.Controllers
 					return BadRequest(ErrorCategoryNotExit);
 
 				var entity = await _officeDbContext.Category.AsTracking().FirstOrDefaultAsync(e => e.CategoryId == category.Id);
-				_officeDbContext.Entry(category.ToEntityCategory(entity)).State = EntityState.Modified;
+				
+				var updated = category.ToEntityCategory(entity);
+
+				_officeDbContext.Entry(updated).State = EntityState.Modified;
 				await _officeDbContext.SaveChangesAsync();
 
-				return new ObjectResult(await GetCategoryByIdAsync(id))
+				return new ObjectResult(updated)
 				{
 					StatusCode = StatusCodes.Status202Accepted
 				};

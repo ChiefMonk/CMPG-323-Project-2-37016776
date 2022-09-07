@@ -190,10 +190,13 @@ namespace Project2.WebAPI.Controllers
 					return BadRequest(ErrorZoneNotExit);
 
 				var entity = await _officeDbContext.Zone.AsTracking().FirstOrDefaultAsync(e => e.ZoneId == zone.Id);
-				_officeDbContext.Entry(zone.ToEntityZone(entity)).State = EntityState.Modified;
+
+				var updated = zone.ToEntityZone(entity);
+
+				_officeDbContext.Entry(updated).State = EntityState.Modified;
 				await _officeDbContext.SaveChangesAsync();
 
-				return new ObjectResult(await GetZoneByIdAsync(id))
+				return new ObjectResult(updated)
 				{
 					StatusCode = StatusCodes.Status202Accepted
 				};
