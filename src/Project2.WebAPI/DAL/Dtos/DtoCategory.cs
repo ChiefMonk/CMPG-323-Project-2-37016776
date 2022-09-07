@@ -1,4 +1,6 @@
-﻿namespace Project2.WebAPI.DAL.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project2.WebAPI.DAL.Dtos
 {
 	/// <summary>
 	/// 
@@ -13,6 +15,7 @@
 		/// <value>
 		/// The name of the category.
 		/// </value>
+		[Required(ErrorMessage = "Category Name is required")]
 		public string CategoryName { get; set; }
 
 		/// <summary>
@@ -21,6 +24,7 @@
 		/// <value>
 		/// The category description.
 		/// </value>
+		[Required(ErrorMessage = "Category Description is required")]
 		public string CategoryDescription { get; set; }
 	}
 }

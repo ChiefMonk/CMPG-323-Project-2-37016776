@@ -1,4 +1,6 @@
-﻿namespace Project2.WebAPI.DAL.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project2.WebAPI.DAL.Dtos
 {
 	/// <summary>
 	/// 
@@ -20,6 +22,7 @@
 		/// <value>
 		/// The name of the user.
 		/// </value>
+		[Required(ErrorMessage = "User Name is required")] 
 		public string UserName { get; set; }
 
 		/// <summary>
@@ -28,6 +31,7 @@
 		/// <value>
 		/// The email address.
 		/// </value>
+		[Required(ErrorMessage = "Email Address is required"), EmailAddress]
 		public string EmailAddress { get; set; }
 
 		/// <summary>
@@ -36,6 +40,7 @@
 		/// <value>
 		/// The phone number.
 		/// </value>
+		[Required(ErrorMessage = "Phone Number is required")] 
 		public string PhoneNumber { get; set; }
 
 		/// <summary>

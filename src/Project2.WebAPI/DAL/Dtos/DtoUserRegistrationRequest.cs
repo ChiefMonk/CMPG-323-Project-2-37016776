@@ -8,7 +8,6 @@ namespace Project2.WebAPI.DAL.Dtos
 	/// </summary>
 	public class DtoUserRegistrationRequest
 	{
-
 		/// <summary>
 		/// Gets or sets the name of the user.
 		/// </summary>
