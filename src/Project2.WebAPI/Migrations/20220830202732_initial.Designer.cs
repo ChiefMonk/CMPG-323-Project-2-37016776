@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Project2.WebAPI.DAL.Entities;
+using Project2.WebAPI.DAL;
 
 namespace Project2.WebAPI.Migrations
 {
-    [DbContext(typeof(ConnectedOfficeDbContext))]
+  [DbContext(typeof(ConnectedOfficeDbContext))]
     [Migration("20220830202732_initial")]
     partial class initial
     {

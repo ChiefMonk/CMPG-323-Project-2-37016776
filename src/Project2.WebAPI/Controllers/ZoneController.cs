@@ -1,40 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project2.WebAPI.DAL.Services.Zone;
+using Microsoft.EntityFrameworkCore;
+using Project2.WebAPI.DAL;
+using Project2.WebAPI.DAL.Converters;
+using Project2.WebAPI.DAL.Dtos;
 using Project2.WebAPI.Utils;
-using Project2.WebAPI.Utils.Dtos;
 using Project2.WebAPI.Utils.Exceptions;
 
 namespace Project2.WebAPI.Controllers
 {
-	/// <summary>
-	/// The api/zones controller
-	/// </summary>
-	/// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
-	[Route("api/zones")]
+    /// <summary>
+    /// The api/zones controller
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
+    [Route("api/zones")]
 	[Authorize(Roles = ApiConstants.UserRoles.Admin)]
 	[ApiController]
 	public class ZoneController : ControllerBase
 	{
-		private readonly IZoneService _zoneService;
+		private const string ErrorInvalidZoneId = "Please specify a valid zone-id";
+		private const string ErrorZoneNotExit = "This zone does not exist";
+
+		private readonly ConnectedOfficeDbContext _officeDbContext;
 
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ZoneController"/> class.
+		/// Initializes a new instance of the <see cref="ZoneController" /> class.
 		/// </summary>
-		/// <param name="zoneService">The zone service.</param>
-		public ZoneController(IZoneService zoneService)
+		/// <param name="officeDbContext">The office database context.</param>
+		public ZoneController(ConnectedOfficeDbContext officeDbContext)
 		{
-			_zoneService = zoneService;
+			_officeDbContext = officeDbContext;
 		}
 
 		/// <summary>
-		/// Gets all zone collection
+		/// gets all zones
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("get-all")]
@@ -43,7 +49,8 @@ namespace Project2.WebAPI.Controllers
 		{
 			try
 			{
-				var response =  await _zoneService.GetAllZoneCollectionAsync();
+				var entityList = await _officeDbContext.Zone.AsNoTracking().ToListAsync();
+				var response = entityList.ToDtoZoneCollection();
 
 				return Ok(response);
 			}
@@ -59,23 +66,29 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Gets a particular zone by its id.
+		/// gets a particular zone by its id
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
-		[HttpGet("get-by-id/{id}", Name = "GetZone")]
+		[HttpGet("get/{id}", Name = "GetZone")]
 		[ProducesResponseType(typeof(DtoZone), StatusCodes.Status200OK)]
 		public async ValueTask<ActionResult<DtoZone>> GetZoneByIdAsync(Guid id)
 		{
-
-			if(id == Guid.Empty)
-				return BadRequest("Please specify a valid zone-id");
+			if (id == Guid.Empty)
+				return BadRequest(ErrorInvalidZoneId);
 
 			try
 			{
-				var zone = await _zoneService.GetZoneByIdAsync(id);
+				var entity = await _officeDbContext.Zone
+					.AsNoTracking()
+					.FirstOrDefaultAsync(e => e.ZoneId == id);
 
-				return Ok(zone);
+				if (entity == null)
+					throw new MyWebApiException(HttpStatusCode.NotFound, $"No zone with id = '{id}' has been found");
+
+				var response = entity.ToDtoZone();
+
+				return Ok(response);
 			}
 			catch (MyWebApiException ex)
 			{
@@ -87,8 +100,44 @@ namespace Project2.WebAPI.Controllers
 			}
 		}
 
+
 		/// <summary>
-		/// Creates a zone.
+		/// gets the number of categories with devices linked to a zone
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		[HttpGet("get-num-of-categories-by-zone/{id}")]
+		[ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<int>> GetNumberOfCategoriesByZoneIdAsync(Guid id)
+		{
+			if (id == Guid.Empty)
+				return BadRequest(ErrorInvalidZoneId);
+
+			try
+			{
+				var categoryCount = await (from c in _officeDbContext.Category.AsNoTracking()
+					join d in _officeDbContext.Device.AsNoTracking() on c.CategoryId equals d.CategoryId
+																	 where d.ZoneId == id
+					select new
+					{
+						c.CategoryId
+					}).CountAsync();
+
+				return Ok(categoryCount);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+
+		/// <summary>
+		/// creates a new zone
 		/// </summary>
 		/// <param name="zone">The zone.</param>
 		/// <returns></returns>
@@ -96,11 +145,20 @@ namespace Project2.WebAPI.Controllers
 		[ProducesResponseType(typeof(DtoZone), StatusCodes.Status201Created)]
 		public async ValueTask<ActionResult<DtoZone>> CreateZoneAsync([FromBody] DtoZone zone)
 		{
+			if (zone.Id == Guid.Empty)
+				return BadRequest(ErrorInvalidZoneId);
+
 			try
 			{
-				var response =  await _zoneService.CreateZoneAsync(zone);
+				var exists = await DoesZoneExistAsync(zone.Id);
+				if (exists)
+					return BadRequest("A zone with the same id already exists");
 
-				return Created(new Uri(Url.Link("GetZone", new { id = zone.Id })), response);
+				var entity = zone.ToEntityZone();
+				await _officeDbContext.Zone.AddAsync(entity);
+				await _officeDbContext.SaveChangesAsync();
+
+				return Created(new Uri(Url.Link("GetZone", new { id = zone.Id })), zone.ToEntityZone());
 			}
 			catch (MyWebApiException ex)
 			{
@@ -113,25 +171,31 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Updates a zone.
+		/// updates or patches an existing zone
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <param name="zone">The zone.</param>
 		/// <returns></returns>
-		[HttpPut("update/{id}")]
+		[HttpPatch("update/{id}")]
 		[ProducesResponseType(typeof(DtoZone), StatusCodes.Status202Accepted)]
 		public async ValueTask<ActionResult<DtoZone>> UpdateZoneAsync(Guid id, [FromBody] DtoZone zone)
 		{
 			if (id == Guid.Empty)
-				return BadRequest("Please specify a valid zone-id to update");
+				return BadRequest(ErrorInvalidZoneId);
 
 			try
 			{
-				var response = await _zoneService.UpdateZoneAsync(id, zone);
+				var exists = await DoesZoneExistAsync(id);
+				if (!exists)
+					return BadRequest(ErrorZoneNotExit);
 
-				return new ObjectResult(response)
+				var entity = await _officeDbContext.Zone.AsTracking().FirstOrDefaultAsync(e => e.ZoneId == zone.Id);
+				_officeDbContext.Entry(zone.ToEntityZone(entity)).State = EntityState.Modified;
+				await _officeDbContext.SaveChangesAsync();
+
+				return new ObjectResult(await GetZoneByIdAsync(id))
 				{
-					StatusCode = (int)HttpStatusCode.Accepted
+					StatusCode = StatusCodes.Status202Accepted
 				};
 			}
 			catch (MyWebApiException ex)
@@ -147,7 +211,7 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Deletes a zone.
+		/// deletes an existing zone if no linked devices
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
@@ -156,16 +220,31 @@ namespace Project2.WebAPI.Controllers
 		public async ValueTask<ActionResult<Guid>> DeleteZone(Guid id)
 		{
 			if (id == Guid.Empty)
-				return BadRequest("Please specify a valid zone-id to delete");
+				return BadRequest(ErrorInvalidZoneId);
 
 			try
 			{
-				var response =  await _zoneService.DeleteZoneAsync(id);
+				var exists = await DoesZoneExistAsync(id);
+				if (!exists)
+					return BadRequest(ErrorZoneNotExit);
 
-				return new ObjectResult(response)
+				//check if zone has devices assigned
+				var hasDevices = await _officeDbContext.Device.AsTracking().AnyAsync(e => e.ZoneId == id);
+				if (hasDevices)
 				{
-					StatusCode = (int)HttpStatusCode.NoContent
-				};
+					throw new MyWebApiException(HttpStatusCode.Forbidden,
+						"You can not delete this zone because it has devices assigned to it");
+				}
+
+				var entity = await _officeDbContext.Zone.AsTracking().FirstOrDefaultAsync(e => e.ZoneId == id);
+
+				if (entity != null)
+				{
+					_officeDbContext.Zone.Remove(entity);
+					await _officeDbContext.SaveChangesAsync();
+				}
+
+				return StatusCode(StatusCodes.Status204NoContent, "The category has been deleted successfully");
 			}
 			catch (MyWebApiException ex)
 			{
@@ -176,5 +255,19 @@ namespace Project2.WebAPI.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
+
+		#region Privates
+
+		/// <summary>
+		/// Does the zone exist asynchronous.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		private async ValueTask<bool> DoesZoneExistAsync(Guid id)
+		{
+			return await _officeDbContext.Zone.AsTracking().AnyAsync(e => e.ZoneId == id);
+		}
+
+		#endregion
 	}
 }
