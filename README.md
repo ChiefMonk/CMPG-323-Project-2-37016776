@@ -17,7 +17,7 @@ This is the second project of the CMPG 323 module deliverables. Smart devices su
 An IoT Device Management System keeps track of the whereabouts of all IoT devices deployed by the organisation. Depending on the type of organisation, different categories of devices are used. Each IoT device is initially categorised and registered. Then, IoT devices are deployed throughout the organisation's buildings in predefined zones. Administrators can view all IoT devices, update their properties, add new devices and move them to other zones.
 
 
-### 1.1. Entity Information
+### 1.1 Entity Information
 Therefore, for the complete and satisfactory operations of the IoT Device Management System, the following information is stored in the database about each entity:
 * System User
     * User Name
@@ -53,7 +53,7 @@ Therefore, for the complete and satisfactory operations of the IoT Device Manage
     * Logout Date and Time
 
 
-### 1.2. Entity Rules and Restrictions
+### 1.2 Entity Rules and Restrictions
 The above entity information is stored in a relational database. The database tables do not have a complete set of constraints that could prevent or limit, for example the deletion of mandatory information.
 Therefore most of the data entegrity rules are enforced with the application (WebAPI), and the following are some of the applicable rules:
 * System User
@@ -104,6 +104,20 @@ of the overview document explains the overall project structure for the semester
 <a name="tech"></a>
 ## 2. Technology Stack
 Representational State Transfer (REST) is a model and architectural style for web services over HTTP. When this model is used for API design, IoT devices can be managed using the Cloud. Therefore, the IoT Device Management System should be implemented as a set of RESTful APIs.
+Representational State Transfer (REST) is a model and architectural style for web services over HTTP. When this model is used for API design, IoT devices can be managed using the Cloud. Therefore, the IoT Device Management System should be implemented as a set of RESTful APIs.
+
+The diagram below described a typical client-webapi relationship via a restful service.
+<img src="restful.png" width="200px" />
+
+The archive the above architecture, the following technology stack was employed:
+* WebAPI using .NET Core
+* Swagger and OpenAPI to document the Web API 
+* Microsoft SQL Server Database
+* Entity Framework Core for Object Relational Mapping (ORM)
+* Microsoft Identity for User management, Authentication and Authorisation
+* JSON Web Tokens (JWT) for representing claims securely between client and server.
+of the overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
+
 The overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
 
 <a name="struc"></a>
