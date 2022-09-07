@@ -2,7 +2,7 @@ name: Build and deploy .NET Core application to Web App CMPG323-37016776-Project
 on:
   push:
     branches:
-    - develop
+    - release
 env:
   AZURE_WEBAPP_NAME: CMPG323-37016776-Project2-WebAPI
   AZURE_WEBAPP_PACKAGE_PATH: src/Project2.WebAPI/publish

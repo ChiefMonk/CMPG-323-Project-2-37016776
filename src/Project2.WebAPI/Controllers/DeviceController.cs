@@ -40,7 +40,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Gets all device collection
+		/// gets all devices
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("get-all")]
@@ -64,9 +64,72 @@ namespace Project2.WebAPI.Controllers
 			}
 		}
 
+		/// <summary>
+		/// gets all devices by zone id
+		/// </summary>
+		/// <param name="zoneId">The zone identifier.</param>
+		/// <returns></returns>
+		/// <exception cref="Project2.WebAPI.Utils.Exceptions.MyWebApiException">No zone with id = '{id}' has been found</exception>
+		[HttpGet("get-all-by-zone/{zoneId}")]
+		[ProducesResponseType(typeof(IList<DtoDevice>), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<IList<DtoDevice>>> GetDeviceCollectionByZoneIdAsync(Guid zoneId)
+		{
+			if (zoneId == Guid.Empty)
+				return BadRequest("Please specify a valid zone-id");
+
+			try
+			{
+				var entityList = await _officeDbContext.Device
+					.AsNoTracking()
+					.Where(e => e.ZoneId == zoneId).ToListAsync();
+
+				var response = entityList.ToDtoDeviceCollection();
+				return Ok(response);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
 
 		/// <summary>
-		/// Gets a particular device by its id.
+		/// gets all devices by category id
+		/// </summary>
+		/// <param name="categoryId">The category identifier.</param>
+		/// <returns></returns>
+		[HttpGet("get-all-by-category/{categoryId}")]
+		[ProducesResponseType(typeof(IList<DtoDevice>), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<IList<DtoDevice>>> GetDeviceCollectionByCategoryIdAsync(Guid categoryId)
+		{
+			if (categoryId == Guid.Empty)
+				return BadRequest("Please specify a valid category-id");
+
+			try
+			{
+				var entityList = await _officeDbContext.Device
+					.AsNoTracking()
+					.Where(e => e.CategoryId == categoryId).ToListAsync();
+
+				var response = entityList.ToDtoDeviceCollection();
+				return Ok(response);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+
+		/// <summary>
+		/// gets a particular device by its id
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
@@ -101,71 +164,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// gets the device collection by zone id.
-		/// </summary>
-		/// <param name="zoneId">The zone identifier.</param>
-		/// <returns></returns>
-		/// <exception cref="Project2.WebAPI.Utils.Exceptions.MyWebApiException">No zone with id = '{id}' has been found</exception>
-		[HttpGet("get-all-by-zone/{zoneId}")]
-		[ProducesResponseType(typeof(IList<DtoDevice>), StatusCodes.Status200OK)]
-		public async ValueTask<ActionResult<IList<DtoDevice>>> GetDeviceCollectionByZoneIdAsync(Guid zoneId)
-		{
-			if (zoneId == Guid.Empty)
-				return BadRequest("Please specify a valid zone-id");
-
-			try
-			{
-				var entityList = await _officeDbContext.Device
-					.AsNoTracking()
-					.Where(e => e.ZoneId == zoneId).ToListAsync();
-
-				var response = entityList.ToDtoDeviceCollection();
-				return Ok(response);
-			}
-			catch (MyWebApiException ex)
-			{
-				return StatusCode((int)ex.StatusCode, ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-		}
-
-		/// <summary>
-		/// gets the device collection by category id.
-		/// </summary>
-		/// <param name="categoryId">The category identifier.</param>
-		/// <returns></returns>
-		[HttpGet("get-all-by-category/{categoryId}")]
-		[ProducesResponseType(typeof(IList<DtoDevice>), StatusCodes.Status200OK)]
-		public async ValueTask<ActionResult<IList<DtoDevice>>> GetDeviceCollectionByCategoryIdAsync(Guid categoryId)
-		{
-			if (categoryId == Guid.Empty)
-				return BadRequest("Please specify a valid category-id");
-
-			try
-			{
-				var entityList = await _officeDbContext.Device
-					.AsNoTracking()
-					.Where(e => e.CategoryId == categoryId).ToListAsync();
-
-				var response = entityList.ToDtoDeviceCollection();
-				return Ok(response);
-			}
-			catch (MyWebApiException ex)
-			{
-				return StatusCode((int)ex.StatusCode, ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-		}
-
-
-		/// <summary>
-		/// Creates a device.
+		/// creates a new device
 		/// </summary>
 		/// <param name="device">The device.</param>
 		/// <returns></returns>
@@ -199,7 +198,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Updates a device.
+		/// updates or patches an existing device
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <param name="device">The device.</param>
@@ -237,9 +236,8 @@ namespace Project2.WebAPI.Controllers
 		}
 
 
-
 		/// <summary>
-		/// Deletes a device.
+		/// deletes an existing device
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>

@@ -64,7 +64,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// logs in a system user - admin or normal user.
+		/// logs in a system user - admin or normal user
 		/// </summary>
 		/// <param name="username">The username.</param>
 		/// <param name="password">The password.</param>
@@ -145,6 +145,98 @@ namespace Project2.WebAPI.Controllers
 		}
 
 
+		/// <summary>
+		/// gets a particular system user by its id.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		[HttpGet("get/{id}", Name = "GetUser")]
+		[Authorize(Roles = ApiConstants.UserRoles.Admin)]
+		[ProducesResponseType(typeof(DtoSystemUser), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<DtoSystemUser>> GetSystemUserByIdAsync(Guid id)
+		{
+			if (id == Guid.Empty)
+			{
+				throw new MyWebApiException(HttpStatusCode.BadRequest,
+					$"The user-id specified is not valid (id = '{id}')");
+			}
+
+			try
+			{
+				var systemUser = await _signInManager.UserManager.FindByIdAsync(id.ToString("D"));
+				if (systemUser == null)
+					throw new MyWebApiException(HttpStatusCode.NotFound, $"No system user with id = '{id}' has been found");
+
+				var rolesList = await _signInManager.UserManager.GetRolesAsync(systemUser);
+				var roleName = rolesList.FirstOrDefault() ?? ApiConstants.UserRoles.User;
+
+				var response = systemUser.ToDtoSystemUser(roleName);
+
+				return Ok(response);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+
+		/// <summary>
+		/// creates and registers an admin system user
+		/// </summary>
+		/// <param name="request">The request.</param>
+		/// <returns></returns>
+		[HttpPost("register/admin")]
+		[AllowAnonymous]
+		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
+		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterAdminUserAsync([FromBody] DtoUserRegistrationRequest request)
+		{
+			try
+			{
+				var response = await CreateUserAsync(request, ApiConstants.UserRoles.Admin);
+
+				return Created(new Uri(Url.Link("GetUser", new { id = response.User.Id })), response);
+			}
+			catch (MyWebApiException ex)
+			{
+					return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+		/// <summary>
+		/// creates and registers a normal system user
+		/// </summary>
+		/// <param name="request">The request.</param>
+		/// <returns>DtoUserRegistrationResponse</returns>
+		[HttpPost("register/user")]
+		[AllowAnonymous]
+		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
+		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterNormalUserAsync([FromBody] DtoUserRegistrationRequest request)
+		{
+			try
+			{
+				var response = await CreateUserAsync(request, ApiConstants.UserRoles.User);
+
+				return Created(new Uri(Url.Link("GetUser", new { id = response.User.Id })), response);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
 
 		/// <summary>
 		/// logs out a system user.
@@ -178,97 +270,6 @@ namespace Project2.WebAPI.Controllers
 			}
 		}
 
-
-		/// <summary>
-		/// registers an admin system user.
-		/// </summary>
-		/// <param name="request">The request.</param>
-		/// <returns></returns>
-		[HttpPost("register/admin")]
-		[AllowAnonymous]
-		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
-		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterAdminUserAsync([FromBody] DtoUserRegistrationRequest request)
-		{
-			try
-			{
-				var response = await CreateUserAsync(request, ApiConstants.UserRoles.Admin);
-
-				return Created(new Uri(Url.Link("GetUser", new { id = response.User.Id })), response);
-			}
-			catch (MyWebApiException ex)
-			{
-					return StatusCode((int)ex.StatusCode, ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-		}
-
-		/// <summary>
-		/// registers a normal system user.
-		/// </summary>
-		/// <param name="request">The request.</param>
-		/// <returns>DtoUserRegistrationResponse</returns>
-		[HttpPost("register/user")]
-		[AllowAnonymous]
-		[ProducesResponseType(typeof(DtoUserRegistrationResponse), StatusCodes.Status201Created)]
-		public async ValueTask<ActionResult<DtoUserRegistrationResponse>> RegisterNormalUserAsync([FromBody] DtoUserRegistrationRequest request)
-		{
-			try
-			{
-				var response = await CreateUserAsync(request, ApiConstants.UserRoles.User);
-
-				return Created(new Uri(Url.Link("GetUser", new { id = response.User.Id })), response);
-			}
-			catch (MyWebApiException ex)
-			{
-				return StatusCode((int)ex.StatusCode, ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-		}
-
-
-		/// <summary>
-		/// gets a particular system user by its id.
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <returns></returns>
-		[HttpGet("get/{id}", Name = "GetUser")]
-		[ProducesResponseType(typeof(DtoSystemUser), StatusCodes.Status200OK)]
-		public async ValueTask<ActionResult<DtoSystemUser>> GetSystemUserByIdAsync(Guid id)
-		{
-			if (id == Guid.Empty)
-			{
-				throw new MyWebApiException(HttpStatusCode.BadRequest,
-					$"The user-id specified is not valid (id = '{id}')");
-			}
-
-			try
-			{
-				var systemUser = await _signInManager.UserManager.FindByIdAsync(id.ToString("D"));
-				if (systemUser == null)
-					throw new MyWebApiException(HttpStatusCode.NotFound, $"No system user with id = '{id}' has been found");
-
-				var rolesList = await _signInManager.UserManager.GetRolesAsync(systemUser);
-				var roleName = rolesList.FirstOrDefault() ?? ApiConstants.UserRoles.User;
-
-				var response = systemUser.ToDtoSystemUser(roleName);
-
-				return Ok(response);
-			}
-			catch (MyWebApiException ex)
-			{
-				return StatusCode((int)ex.StatusCode, ex.Message);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-			}
-		}
 
 		#region Privates
 		/// <summary>

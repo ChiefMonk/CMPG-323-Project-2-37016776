@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -39,7 +40,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Gets all zone collection
+		/// gets all zones
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("get-all")]
@@ -65,7 +66,7 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Gets a particular zone by its id.
+		/// gets a particular zone by its id
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
@@ -99,8 +100,44 @@ namespace Project2.WebAPI.Controllers
 			}
 		}
 
+
 		/// <summary>
-		/// Creates a zone.
+		/// gets the number of categories with devices linked to a zone
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns></returns>
+		[HttpGet("get-num-of-categories-by-zone/{id}")]
+		[ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+		public async ValueTask<ActionResult<int>> GetNumberOfCategoriesByZoneIdAsync(Guid id)
+		{
+			if (id == Guid.Empty)
+				return BadRequest(ErrorInvalidZoneId);
+
+			try
+			{
+				var categoryCount = await (from c in _officeDbContext.Category.AsNoTracking()
+					join d in _officeDbContext.Device.AsNoTracking() on c.CategoryId equals d.CategoryId
+																	 where d.ZoneId == id
+					select new
+					{
+						c.CategoryId
+					}).CountAsync();
+
+				return Ok(categoryCount);
+			}
+			catch (MyWebApiException ex)
+			{
+				return StatusCode((int)ex.StatusCode, ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+			}
+		}
+
+
+		/// <summary>
+		/// creates a new zone
 		/// </summary>
 		/// <param name="zone">The zone.</param>
 		/// <returns></returns>
@@ -134,7 +171,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Updates a zone.
+		/// updates or patches an existing zone
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <param name="zone">The zone.</param>
@@ -174,7 +211,7 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Deletes a zone.
+		/// deletes an existing zone if no linked devices
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>

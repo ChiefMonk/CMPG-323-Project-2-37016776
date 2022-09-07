@@ -39,7 +39,7 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Gets all category collection
+		/// gets all categories
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet("get-all")]
@@ -65,7 +65,7 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Gets a particular category by its id.
+		/// gets a particular category by its id
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
@@ -100,11 +100,11 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// gets the number of zones with devices linked to a category.
+		/// gets the number of zones with devices linked to a category
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
-		[HttpGet("number-of-zones-by-category/{id}")]
+		[HttpGet("get-num-of-zones-by-category/{id}")]
 		[ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
 		public async ValueTask<ActionResult<int>> GetNumberOfZonesByCategoryIdAsync(Guid id)
 		{
@@ -135,7 +135,7 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Creates a category.
+		/// creates a new category
 		/// </summary>
 		/// <param name="category">The category.</param>
 		/// <returns></returns>
@@ -169,12 +169,12 @@ namespace Project2.WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// Updates a category.
+		/// updates or patches an existing category
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <param name="category">The category.</param>
 		/// <returns></returns>
-		[HttpPut("update/{id}")]
+		[HttpPatch("update/{id}")]
 		[ProducesResponseType(typeof(DtoCategory), StatusCodes.Status202Accepted)]
 		public async ValueTask<ActionResult<DtoCategory>> UpdateCategoryAsync(Guid id, [FromBody] DtoCategory category)
 		{
@@ -209,7 +209,7 @@ namespace Project2.WebAPI.Controllers
 
 
 		/// <summary>
-		/// Deletes a category.
+		/// deletes an existing category if no linked devices
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>

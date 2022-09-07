@@ -55,7 +55,7 @@ Therefore, for the complete and satisfactory operations of the IoT Device Manage
 
 ### 1.2 Entity Rules and Restrictions
 The above entity information is stored in a relational database. The database tables do not have a complete set of constraints that could prevent or limit, for example the deletion of mandatory information.
-Therefore most of the data entegrity rules are enforced with the application (WebAPI), and the following are some of the applicable rules:
+Therefore most of the data integrity rules are enforced with the application (WebAPI), and the following are some of the applicable rules:
 * System User
     * Must have a non-empty Username
     * Must have a non-empty strong password
@@ -115,14 +115,14 @@ The archive the above architecture, the following technology stack was employed:
 
 <a name="struc"></a>
 ## 3. Project Structure and WebAPI Endpoints
-The whole solution, named CMPG323.D37016776.Project2.sln, is created using Visual Studion 2019 community edition. The solution only includes a single project, Project2.WebAPI.cproj. The project has the following layers and services:
+The whole solution, named CMPG323.D37016776.Project2.sln, is created using Visual Studio 2019 community edition. The solution only includes a single project, Project2.WebAPI.cproj. The project has the following layers and services:
 * Data Access Layer (DAL)
 * Business Logic Layer (BLL)
-* WebAPI Layer and Presenation via Swagger
+* WebAPI Layer and Presentation via Swagger
 * WebAPI Security using JWT
 * WebAPI and Database hosting and management in Microsoft Azure
 
-The following are the endpoints exposed by the WebAPI and can be accessed and testing uisng swagger. They are grouped per applicable controller:
+The following are the endpoints exposed by the WebAPI and can be accessed and testing using swagger. They are grouped per applicable controller:
 * CategoryController (api/categories)
     * api/categories/get-all
         * Action: GET
@@ -321,7 +321,7 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 
 <a name="refs"></a>
 ## 6. References
-### A. .NET Core WebAPIs
+### .NET Core WebAPIs
 * [Tutorial: Create a web API with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api)
 * [Create web APIs with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/web-api)
 * [Create a web API with ASP.NET Core controllers](https://docs.microsoft.com/en-us/learn/modules/build-web-api-aspnet-core)
@@ -332,7 +332,7 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 * [Build your first microservice with .NET](https://docs.microsoft.com/en-us/learn/modules/dotnet-microservices/)
 * [Automating ASP.NET Core Web API Creation That Communicates With Your Database in 60 Seconds or Less](https://thejpanda.com/2020/08/10/python-automating-asp-net-core-web-api-creation-that-communicates-with-your-database-in-60-seconds-or-less/)
 * [Beginners Guide to Client Server Communication](https://medium.com/@subhangdxt/beginners-guide-to-client-server-communication-8099cf0ac3af)
-### B. Entity Framework Core
+### Entity Framework Core
 * [Entity Framework Core in ASP.NET Core 3.1 – Getting Started](https://procodeguide.com/programming/entity-framework-core-in-asp-net-core/)
 * [Getting Started with EF Core](https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/intro?view=aspnetcore-3.1)
 * [Tutorial: Get started with EF Core in an ASP.NET MVC web app](https://docs.microsoft.com/en-us/ef/core/get-started/overview/first-app?tabs=netcore-cli)
@@ -341,14 +341,14 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 * [Connection Strings](https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-strings)
 * [Identity model customization in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-3.1)
 * [Entity Framework Core Example](https://github.com/procodeguide/EFCore.Sample)
-### C. WebAPI Security
+### WebAPI Security
 * [Overview of ASP.NET Core authentication](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
 * [How to implement JWT authentication in ASP.NET Core](https://www.infoworld.com/article/3669188/how-to-implement-jwt-authentication-in-aspnet-core-6.html)
 * [Introduction to JSON Web Tokens](https://jwt.io/introduction)
 * [JWT Handbook](https://auth0.com/resources/ebooks/jwt-handbook)
 * [Manage JSON Web Tokens in development with dotnet user-jwts](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows&viewFallbackFrom=aspnetcore-3.1)
 * [Authentication and authorization in Azure App Service and Azure Functions](https://docs.microsoft.com/en-us/azure/app-service/overview-authentication-authorization?toc=%2Faspnet%2Fcore%2Ftoc.json&bc=%2Faspnet%2Fcore%2Fbreadcrumb%2Ftoc.json&view=aspnetcore-3.1)
-### D. Microsoft Azure
+### Microsoft Azure
 * [Microsoft Azure Fundamentals: Describe cloud concepts](https://docs.microsoft.com/en-us/learn/paths/microsoft-azure-fundamentals-describe-cloud-concepts/)
 * [Describe cloud computing](https://docs.microsoft.com/en-us/learn/modules/describe-cloud-compute/)
 * [Describe the benefits of using cloud services](https://docs.microsoft.com/en-us/learn/modules/describe-benefits-use-cloud-services/)
