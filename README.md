@@ -4,8 +4,8 @@
 
 ### Table of Contents
 1. [Introduction](#intro) 
-3. [Technology Stack](#tech)
-2. [Visual Studio Project Structure](#struc)
+2. [Technology Stack](#tech)
+3. [Project Structure and WebAPI Endpoints](#struc)
 4. [Dependencies](#nuget)
 5. [Contributors](#cont)
 6. [References](#refs)
@@ -121,7 +121,7 @@ The archive the above architecture, the following technology stack was employed:
 * WebAPI management with Microsoft Azure API Management service
 
 <a name="struc"></a>
-## Project Structure and WebAPI Endpoints
+## 3. Project Structure and WebAPI Endpoints
 The whole solution, named CMPG323.D37016776.Project2.sln, is created using Visual Studion 2019 community edition. The solution only includes a single project, Project2.WebAPI.cproj. The project has the following layers and services:
 * Data Access Layer (DAL)
 * Business Logic Layer (BLL)
@@ -195,7 +195,7 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Response: Id of the deleted zone
         
 <a name="nuget"></a>
-## Dependencies
+## 4. Dependencies
 The following nuget packages are referenced by the Project2.WebAPI project.
 
  | Package  |  Version  |  License  |
@@ -211,11 +211,11 @@ The following nuget packages are referenced by the Project2.WebAPI project.
  | [Swashbuckle.AspNetCore](https://www.nuget.org/packages/Swashbuckle.AspNetCore/6.4.0/)  |  6.4.0  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
 
 <a name="cont"></a>
-## Contributors
+## 5. Contributors
 * [Chipo Hamayobe (37016776)](https://github.com/ChiefMonk) - Project Lead
 
 <a name="refs"></a>
-## References
+## 6. References
 ### A. .NET Core WebAPIs
 * [Tutorial: Create a web API with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api)
 * [Create web APIs with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/web-api)
