@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project2.WebAPI.DAL.Dtos
 {
@@ -15,6 +16,7 @@ namespace Project2.WebAPI.DAL.Dtos
 		/// <value>
 		/// The name of the device.
 		/// </value>
+		[Required(ErrorMessage = "Device Name is required")] 
 		public string DeviceName { get; set; }
 		/// <summary>
 		/// Gets or sets the category identifier.
@@ -22,6 +24,7 @@ namespace Project2.WebAPI.DAL.Dtos
 		/// <value>
 		/// The category identifier.
 		/// </value>
+		[Required(ErrorMessage = "Category Id is required")] 
 		public Guid CategoryId { get; set; }
 		/// <summary>
 		/// Gets or sets the zone identifier.
@@ -29,6 +32,7 @@ namespace Project2.WebAPI.DAL.Dtos
 		/// <value>
 		/// The zone identifier.
 		/// </value>
+		[Required(ErrorMessage = "Zone Id is required")] 
 		public Guid ZoneId { get; set; }
 		/// <summary>
 		/// Gets or sets the status.
@@ -36,6 +40,7 @@ namespace Project2.WebAPI.DAL.Dtos
 		/// <value>
 		/// The status.
 		/// </value>
+		[Required(ErrorMessage = "Status is required")] 
 		public string Status { get; set; }
 		/// <summary>
 		/// Gets or sets a value indicating whether this instance is active.

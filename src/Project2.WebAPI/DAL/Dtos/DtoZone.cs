@@ -1,4 +1,6 @@
-﻿namespace Project2.WebAPI.DAL.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Project2.WebAPI.DAL.Dtos
 {
 	/// <summary>
 	/// 
@@ -13,6 +15,7 @@
 		/// <value>
 		/// The name of the zone.
 		/// </value>
+		[Required(ErrorMessage = "Zone Name is required")] 
 		public string ZoneName { get; set; }
 		/// <summary>
 		/// Gets or sets the zone description.
@@ -20,6 +23,7 @@
 		/// <value>
 		/// The zone description.
 		/// </value>
+		[Required(ErrorMessage = "Zone Description is required")] 
 		public string ZoneDescription { get; set; }
 	}
 }
