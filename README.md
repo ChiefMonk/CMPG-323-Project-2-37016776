@@ -107,7 +107,8 @@ Representational State Transfer (REST) is a model and architectural style for we
 Representational State Transfer (REST) is a model and architectural style for web services over HTTP. When this model is used for API design, IoT devices can be managed using the Cloud. Therefore, the IoT Device Management System should be implemented as a set of RESTful APIs.
 
 The diagram below described a typical client-webapi relationship via a restful service.
-<img src="restful.png" width="200px" />
+<img src="restful.png" width="500px" style="display: inline-block; margin: 0 auto; max-width: 300px" />
+source
 
 The archive the above architecture, the following technology stack was employed:
 * WebAPI using .NET Core
