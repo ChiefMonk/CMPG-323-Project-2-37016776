@@ -156,8 +156,10 @@ namespace Project2.WebAPI
 			{
 				app.UseDeveloperExceptionPage();
 			}
-
-			app.UseHttpsRedirection();
+			else
+			{
+				app.UseHttpsRedirection();
+			}
 
 			app.UseRouting();
 
