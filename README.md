@@ -113,20 +113,55 @@ source
 The archive the above architecture, the following technology stack was employed:
 * WebAPI using .NET Core
 * Swagger and OpenAPI to document the Web API 
-* Microsoft SQL Server Database
+* Microsoft SQL Server Database in Azure
 * Entity Framework Core for Object Relational Mapping (ORM)
 * Microsoft Identity for User management, Authentication and Authorisation
 * JSON Web Tokens (JWT) for representing claims securely between client and server.
-of the overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
-
-The overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
+* Deployment to Microsoft Azure App Service 
+* WebAPI management with Microsoft Azure API Management service
 
 <a name="struc"></a>
 ## Visual Studio Project Structure
-For the work to be done this semester, a single Kanban project (<a href="https://github.com/users/ChiefMonk/projects/5">CMPG 323 Semester Project Plan Kanban Guide</a>) is created to outline and plan for all the work to be done. The scheduled work will be done over 8 Sprints, each lasting 10 working days (2 calendar weeks). At the beginning of every sprint, mostly on the first day, a sprint planning session is convened to categorise and itemise what will be done and allocate appropriate resources and time to each issue. 
+The whole solution, named CMPG323.D37016776.Project2.sln, is created using Visual Studion 2019 community edition. The solution only includes a single project, Project2.WebAPI.cproj. The project has the following layers and services:
+* Data Access Layer (DAL)
+* Business Logic Layer (BLL)
+* WebAPI Layer and Presenation via Swagger
+* WebAPI Security using JWT
+* WebAPI and Database hosting and management in Microsoft Azure
 
-However, to properly manage the project and meet the various sprint deadlines, the work is further planned and divided weekly. This also helps to negate any time challenges that could be encountered over the 2-week fixed time period.
- 
+The following are the endpoints exposed by the WebAPI and can be accessed and testing uisng swagger. They are grouped per applicable controller:
+* CategoryController (api/categories)
+    * api/categories/get-all
+        * Action: GET
+        * Description: Gets all categories
+        * Request: None
+        * Response: IList<DtoCategory>
+    * api/categories/get/{id} 
+        * Action: GET
+        * Description: Gets a particular category by its id
+        * Request: GUID as id
+        * Response: DtoCategory
+    * api/categories/get-num-of-zones-by-category/{id} 
+        * Action: GET
+        * Description: Gets the number of zones with devices linked to a category
+        * Request: GUID as id
+        * Response: number
+    * api/categories/create 
+        * Action: POST
+        * Description: Creates a new category
+        * Request: DtoCategory
+        * Response: DtoCategory
+    * api/categories/update/{id} 
+        * Action: PATCH
+        * Description: Updates or patches an existing category
+        * Request: GUID as id and DtoCategory
+        * Response: DtoCategory
+     * api/categories/delete/{id} 
+        * Action: DELETE
+        * Description: Deletes an existing category if no linked devices
+        * Request: GUID as id
+        * Response: Id of the deleted category
+        
 <a name="nuget"></a>
 ## Dependencies
 The following nuget packages are referenced by the Project2.WebAPI project.
