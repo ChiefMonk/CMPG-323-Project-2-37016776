@@ -108,7 +108,7 @@ Representational State Transfer (REST) is a model and architectural style for we
 
 The diagram below described a typical client-webapi relationship via a restful service.
 <img src="restful.png" width="500px" style="display: inline-block; margin: 0 auto; max-width: 300px" />
-<sup></sup>source: https://medium.com/@subhangdxt/beginners-guide-to-client-server-communication-8099cf0ac3af<sub></sub>
+<p><sup></sup><em>image source: https://medium.com/@subhangdxt/beginners-guide-to-client-server-communication-8099cf0ac3af</em><sub></sub></p>
 
 The archive the above architecture, the following technology stack was employed:
 * WebAPI using .NET Core
