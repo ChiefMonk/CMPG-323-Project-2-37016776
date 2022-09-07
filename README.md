@@ -121,7 +121,7 @@ The archive the above architecture, the following technology stack was employed:
 * WebAPI management with Microsoft Azure API Management service
 
 <a name="struc"></a>
-## Visual Studio Project Structure
+## Project Structure and WebAPI Endpoints
 The whole solution, named CMPG323.D37016776.Project2.sln, is created using Visual Studion 2019 community edition. The solution only includes a single project, Project2.WebAPI.cproj. The project has the following layers and services:
 * Data Access Layer (DAL)
 * Business Logic Layer (BLL)
@@ -161,6 +161,38 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Deletes an existing category if no linked devices
         * Request: GUID as id
         * Response: Id of the deleted category
+
+* ZoneController (api/zones)
+    * api/zones/get-all
+        * Action: GET
+        * Description: Gets all zones
+        * Request: None
+        * Response: IList<DtoZone>
+    * api/zones/get/{id} 
+        * Action: GET
+        * Description: Gets a particular zone by its id
+        * Request: GUID as id
+        * Response: DtoZone
+    * api/zones/get-num-of-categories-by-zone/{id} 
+        * Action: GET
+        * Description: Gets the number of categories with devices linked to a zone
+        * Request: GUID as id
+        * Response: number
+    * api/zones/create 
+        * Action: POST
+        * Description: Creates a new zone
+        * Request: DtoZone
+        * Response: DtoZone   
+        * api/categories/update/{id} 
+        * Action: PATCH
+        * Description: Updates or patches an existing zone
+        * Request: GUID as id and DtoZone
+        * Response: DtoZone
+     * api/zones/delete/{id} 
+        * Action: DELETE
+        * Description: Deletes an existing zone if no linked devices
+        * Request: GUID as id
+        * Response: Id of the deleted zone
         
 <a name="nuget"></a>
 ## Dependencies
