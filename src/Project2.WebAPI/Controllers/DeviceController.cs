@@ -181,6 +181,16 @@ namespace Project2.WebAPI.Controllers
 				if (exists)
 					return BadRequest("A device with the same id already exists");
 
+				//check if zone is valid
+				var zone = await _officeDbContext.Zone.AsNoTracking().FirstOrDefaultAsync(e => e.ZoneId == device.ZoneId);
+				if (zone == null)
+					return BadRequest("A zone id specified does not exist");
+
+				//check if category is valid
+				var category = await _officeDbContext.Category.AsNoTracking().FirstOrDefaultAsync(e => e.CategoryId == device.CategoryId);
+				if (category == null)
+					return BadRequest("A category id specified does not exist");
+
 				var entity = device.ToEntityDevice();
 				await _officeDbContext.Device.AddAsync(entity);
 				await _officeDbContext.SaveChangesAsync();
@@ -215,6 +225,16 @@ namespace Project2.WebAPI.Controllers
 				var exists = await DoesDeviceExistAsync(id);
 				if (!exists)
 					return BadRequest(ErrorDeviceNotExit);
+
+				//check if zone is valid
+				var zone = await _officeDbContext.Zone.AsNoTracking().FirstOrDefaultAsync(e => e.ZoneId == device.ZoneId);
+				if (zone == null)
+					return BadRequest("A zone id specified does not exist");
+
+				//check if category is valid
+				var category = await _officeDbContext.Category.AsNoTracking().FirstOrDefaultAsync(e => e.CategoryId == device.CategoryId);
+				if (category == null)
+					return BadRequest("A category id specified does not exist");
 
 				var entity = await _officeDbContext.Device.AsTracking().FirstOrDefaultAsync(e => e.DeviceId == device.Id);
 
