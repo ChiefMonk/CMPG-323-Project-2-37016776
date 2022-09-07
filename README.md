@@ -16,7 +16,7 @@ This is the second project of the CMPG 323 module deliverables. Smart devices su
 
 An IoT Device Management System keeps track of the whereabouts of all IoT devices deployed by the organisation. Depending on the type of organisation, different categories of devices are used. Each IoT device is initially categorised and registered. Then, IoT devices are deployed throughout the organisation's buildings in predefined zones. Administrators can view all IoT devices, update their properties, add new devices and move them to other zones.
 
-### Entity Information
+#### 1.1. Entity Information
 Therefore, for the complete and satisfactory operations of the IoT Device Management System, the following information is stored in the database about each entity:
 * System User
     * User Name
@@ -51,7 +51,7 @@ Therefore, for the complete and satisfactory operations of the IoT Device Manage
     * Login Date and Time
     * Logout Date and Time
 
-### Entity Rules and Restrictions
+#### 1.2. Entity Rules and Restrictions
 The above entity information is stored in a relational database. The database tables do not have a complete set of constraints that could prevent or limit, for example the deletion of mandatory information.
 Therefore most of the data entegrity rules are enforced with the application (WebAPI), and the following are some of the applicable rules:
 * System User
