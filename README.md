@@ -5,7 +5,7 @@
 ### Table of Contents
 1. [Introduction](#intro)
 3. [Technology Stack](#tech)
-2. [Project Structure](#struc)
+2. [Visual Studio Project Structure](#struc)
 4. [Dependencies](#nuget)
 5. [Contributors](#cont)
 6. [References](#refs)
@@ -16,7 +16,15 @@ This is the second project of the CMPG 323 module deliverables. Smart devices su
 
 An IoT Device Management System keeps track of the whereabouts of all IoT devices deployed by the organisation. Depending on the type of organisation, different categories of devices are used. Each IoT device is initially categorised and registered. Then, IoT devices are deployed throughout the organisation's buildings in predefined zones. Administrators can view all IoT devices, update their properties, add new devices and move them to other zones.
 
-Therefore, apart from information about system users and their sessions, the following details important to the management of IoT devices is also kept:
+### Entity Information
+Therefore, for the complete and satisfactory operations of the IoT Device Management System, the following information is stored in the database about each entity:
+* System User
+    * User Name
+    * Password
+    * Email Address
+    * Phone Number
+    * Role
+
 * Category
     * Category ID
     * Category Name
@@ -38,18 +46,51 @@ Therefore, apart from information about system users and their sessions, the fol
     * Is Active
     * Date and Time Created
 
-* System User
-    * User Name
-    * Email Address
-    * Phone Number
-    * Role : Admin or User 
-
 * User Session
     * Session Token
     * Login Date and Time
     * Logout Date and Time
 
+### Entity Rules and Restrictions
+The above entity information is stored in a relational database. The database tables do not have a complete set of constraints that could prevent or limit, for example the deletion of mandatory information.
+Therefore most of the data entegrity rules are enforced with the application (WebAPI), and the following are some of the applicable rules:
+* System User
+    * Must have a non-empty Username
+    * Must have a non-empty strong password
+    * Must have a non-empty email address
+    * Must have a non-empty phone Number
+    * The role can only be Admin or User 
 
+* Category
+    * Must have a valid and unique GUID as a category id
+    * Must have a non-empty category name
+    * Must have a non-empty category description
+    * Must have a valid creation date and time 
+    * On creation, the category id is checked for uniqueness
+    * A category with linked devices can not be deleted
+
+* Zone
+    * Must have a valid and unique GUID as a zone id
+    * Must have a non-empty zone name
+    * Must have a non-empty zone description
+    * Must have a valid creation date and time 
+    * On creation, the zone id is checked for uniqueness
+    * A zone with linked devices can not be deleted
+
+* Device
+    * Must have a valid and unique GUID as a device id
+    * Must have a non-empty device name
+    * Must be assigned to a valid a category
+    * Must be assigned to a valid a zone
+    * Must have a valid and current status
+    * Can be set to be active or not
+    * Must have a valid creation date and time 
+    * On creation, the zone id is checked for uniqueness
+
+* User Session
+    * A GUID as session token is created and stored on user login
+    * The login date and time is stored on user login
+    * The logout date and time is null by default and is update on user logout
 
 This stage involves the development, testing and deployment of the following:
 * a .NET Core based WebAPI
@@ -64,7 +105,7 @@ Representational State Transfer (REST) is a model and architectural style for we
 The overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
 
 <a name="struc"></a>
-## Project Structure
+## Visual Studio Project Structure
 For the work to be done this semester, a single Kanban project (<a href="https://github.com/users/ChiefMonk/projects/5">CMPG 323 Semester Project Plan Kanban Guide</a>) is created to outline and plan for all the work to be done. The scheduled work will be done over 8 Sprints, each lasting 10 working days (2 calendar weeks). At the beginning of every sprint, mostly on the first day, a sprint planning session is convened to categorise and itemise what will be done and allocate appropriate resources and time to each issue. 
 
 However, to properly manage the project and meet the various sprint deadlines, the work is further planned and divided weekly. This also helps to negate any time challenges that could be encountered over the 2-week fixed time period.
