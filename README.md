@@ -94,13 +94,6 @@ Therefore most of the data entegrity rules are enforced with the application (We
     * The login date and time is stored on user login
     * The logout date and time is null by default and is update on user logout
 
-This stage involves the development, testing and deployment of the following:
-* a .NET Core based WebAPI
-* Web API documentation with Swagger
-* Database with Microsoft SQL Server
-* Object Relationaal Mapping using Entity Framework Core 
-of the overview document explains the overall project structure for the semester, and the general branching strategy for each project repository and also serves as a general guide to everything about this semester's projects for CMPG 323.
-
 <a name="tech"></a>
 ## 2. Technology Stack
 Representational State Transfer (REST) is a model and architectural style for web services over HTTP. When this model is used for API design, IoT devices can be managed using the Cloud. Therefore, the IoT Device Management System should be implemented as a set of RESTful APIs.
@@ -364,8 +357,6 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 * [Explore API Management](https://docs.microsoft.com/en-us/learn/modules/explore-api-management/)
 * [Describe cloud service types](https://docs.microsoft.com/en-us/learn/modules/describe-cloud-service-types/)
 * [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/)
-### .gitignore
-* [Git .gitignore File](https://www.atlassian.com/git/tutorials/saving-changes/gitignore)
 
 
 
