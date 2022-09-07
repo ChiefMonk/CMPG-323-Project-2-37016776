@@ -88,6 +88,8 @@ Therefore most of the data integrity rules are enforced with the application (We
     * Can be set to be active or not
     * Must have a valid creation date and time 
     * On creation, the zone id is checked for uniqueness
+    * On creation or update, the zone id is checked if valid
+    * On creation or update, the category id is checked if valid
 
 * User Session
     * A GUID as session token is created and stored on user login
