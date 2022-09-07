@@ -5,6 +5,8 @@ IP: 196.61.110.186
 https://cmpg323-37016776-project2-webapi.azurewebsites.net
 https://cmpg323-37016776-project2-webapi-management.azure-api.net/
 
+Admin User: chipo/@St37016776@
+
 DROP TABLE [dbo].[UserSession];
 CREATE TABLE [dbo].[UserSession](
 	[SessionID] [uniqueidentifier] NOT NULL,
