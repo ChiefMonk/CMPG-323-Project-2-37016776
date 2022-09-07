@@ -136,31 +136,43 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Gets all categories
         * Request: None
         * Response: IList<DtoCategory>
+        * Authorize: Yes
+        * Roles: Admin
     * api/categories/get/{id} 
         * Action: GET
         * Description: Gets a particular category by its id
         * Request: GUID as id
         * Response: DtoCategory
+        * Authorize: Yes
+        * Roles: Admin
     * api/categories/get-num-of-zones-by-category/{id} 
         * Action: GET
         * Description: Gets the number of zones with devices linked to a category
         * Request: GUID as id
         * Response: number
+        * Authorize: Yes
+        * Roles: Admin
     * api/categories/create 
         * Action: POST
         * Description: Creates a new category
         * Request: DtoCategory
         * Response: DtoCategory
+        * Authorize: Yes
+        * Roles: Admin
     * api/categories/update/{id} 
         * Action: PATCH
         * Description: Updates or patches an existing category
         * Request: GUID as id and DtoCategory
         * Response: DtoCategory
+        * Authorize: Yes
+        * Roles: Admin
     * api/categories/delete/{id} 
         * Action: DELETE
         * Description: Deletes an existing category if no linked devices
         * Request: GUID as id
         * Response: Id of the deleted category
+        * Authorize: Yes
+        * Roles: Admin
 
 * ZoneController (api/zones)
     * api/zones/get-all
@@ -168,31 +180,43 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Gets all zones
         * Request: None
         * Response: IList<DtoZone>
+        * Authorize: Yes
+        * Roles: Admin
     * api/zones/get/{id} 
         * Action: GET
         * Description: Gets a particular zone by its id
         * Request: GUID as id
         * Response: DtoZone
+        * Authorize: Yes
+        * Roles: Admin
     * api/zones/get-num-of-categories-by-zone/{id} 
         * Action: GET
         * Description: Gets the number of categories with devices linked to a zone
         * Request: GUID as id
         * Response: number
+        * Authorize: Yes
+        * Roles: Admin
     * api/zones/create 
         * Action: POST
         * Description: Creates a new zone
         * Request: DtoZone
         * Response: DtoZone   
+        * Authorize: Yes
+        * Roles: Admin
     * api/categories/update/{id} 
         * Action: PATCH
         * Description: Updates or patches an existing zone
         * Request: GUID as id and DtoZone
         * Response: DtoZone
+        * Authorize: Yes
+        * Roles: Admin
     * api/zones/delete/{id} 
         * Action: DELETE
         * Description: Deletes an existing zone if no linked devices
         * Request: GUID as id
         * Response: Id of the deleted zone
+        * Authorize: Yes
+        * Roles: Admin
 
 * DeviceController (api/devices)
     * api/devices/get-all
@@ -200,36 +224,50 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Gets all devices
         * Request: GUID as id
         * Response: IList<DtoDevice>
+        * Authorize: Yes
+        * Roles: Admin
     * api/devices/get-all-by-zone/{zoneId}
         * Action: GET
         * Description: Gets all devices by zone id
         * Request: UID as zone id
         * Response: IList<DtoDevice>
+        * Authorize: Yes
+        * Roles: Admin
     * api/devices/get-all-by-category/{categoryId}
         * Action: GET
         * Description: Gets all devices by category id
         * Request: UID as category id
         * Response: IList<DtoDevice>
+        * Authorize: Yes
+        * Roles: Admin
     * api/devices/get/{id} 
         * Action: GET
         * Description: Gets a particular device by its id
         * Request: GUID as id
         * Response: DtoDevice
+        * Authorize: Yes
+        * Roles: Admin
     * api/devices/create 
         * Action: POST
         * Description: Creates a new device
         * Request: DtoDevice
-        * Response: DtoDevice   
+        * Response: DtoDevice
+        * Authorize: Yes
+        * Roles: Admin
     * api/devices/update/{id} 
         * Action: PATCH
         * Description: Updates or patches an existing device
         * Request: GUID as id and DtoDevice
         * Response: DtoDevice
+        * Authorize: Yes
+        * Roles: Admin
     * api/devices/delete/{id} 
         * Action: DELETE
         * Description: Deletes an existing device
         * Request: GUID as id
         * Response: Id of the deleted device
+        * Authorize: Yes
+        * Roles: Admin
 
 * SecurityController (api/security)
     * api/security/login/{username}/{password}
@@ -237,16 +275,36 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Logs in a system user - admin or normal user
         * Request: username and password
         * Response: DtoUserAuthenticationResponse
+        * Authorize: No
+        * Roles: Any
     * api/security/get/{id} 
         * Action: GET
         * Description: Gets a particular system user by its id
         * Request: GUID as id
         * Response: DtoSystemUser
-    * api/security/get-all-by-zone/{zoneId}
-        * Action: GET
-        * Description: Gets all devices by zone id
-        * Request: UID as zone id
-        * Response: IList<DtoDevice>        
+        * Authorize: Yes
+        * Roles: Admin
+    * api/security/register/admin 
+        * Action: POST
+        * Description: Creates and registers an admin system user
+        * Request: DtoUserRegistrationRequest
+        * Response: DtoUserRegistrationResponse       
+        * Authorize: No
+        * Roles: Any
+    * api/security/register/user 
+        * Action: POST
+        * Description: Creates and registers a normal system user
+        * Request: DtoUserRegistrationRequest
+        * Response: DtoUserRegistrationResponse
+        * Authorize: No
+        * Roles: Any
+    * api/security/logout 
+        * Action: DELETE
+        * Description: Logs out an authenticated user
+        * Request: GUID as id
+        * Response:String message
+        * Authorize: Yes
+        * Roles: Any
 
 <a name="nuget"></a>
 ## 4. Dependencies
