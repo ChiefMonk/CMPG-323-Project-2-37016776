@@ -1,7 +1,9 @@
-# CMPG 323 Project 2 : IoT Device Management System
-<img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="200" /> 
-<img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_it.png" width="200" /> 
 
+# CMPG 323 Project 2 : IoT Device Management System
+<div style="width:98%; height:300px">
+    <img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" style="text-align: left;width=200px;margin-left: 10px" /> 
+    <img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_it.png" tyle="text-align: right;width=200px;margin-right: 10px" /> 
+</div>
 ### Table of Contents
 1. [Introduction](#intro)
 3. [Technology Stack](#tech)
