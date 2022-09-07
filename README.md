@@ -1,8 +1,6 @@
 
 # CMPG 323 Project 2 : IoT Device Management System
-:--- | ---:
-<img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="200px" style="text-align:center;float:center;" />  | <img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="200px" style="text-align:center;float:center;" />
-
+<img src="https://github.com/ChiefMonk/CMPG-323-Overview-37016776/blob/main/nwu_logo.jpg" width="200px" style="text-align:center;float:center;" />
 
 ### Table of Contents
 1. [Introduction](#intro)
@@ -20,7 +18,36 @@ An IoT Device Management System keeps track of the whereabouts of all IoT device
 
 Therefore, apart from information about system users and their sessions, the following details important to the management of IoT devices is also kept:
 * Category
-** Category Id
+    * Category ID
+    * Category Name
+    * Category Description
+    * Date and Time Created
+
+* Zone
+    * Zone ID
+    * Zone Name
+    * Zone Description
+    * Date and Time Created
+
+* Device
+    * Device ID
+    * Device Name
+    * Category ID
+    * Zone ID
+    * Status
+    * Is Active
+    * Date and Time Created
+
+* System User
+    * User Name
+    * Email Address
+    * Phone Number
+    * Role : Admin or User 
+
+* User Session
+    * Session Token
+    * Login Date and Time
+    * Logout Date and Time
 
 
 
