@@ -108,7 +108,7 @@ Representational State Transfer (REST) is a model and architectural style for we
 
 The diagram below described a typical client-webapi relationship via a restful service.
 <img src="restful.png" width="500px" style="display: inline-block; margin: 0 auto; max-width: 300px" />
-source
+<sup></sup>source: https://medium.com/@subhangdxt/beginners-guide-to-client-server-communication-8099cf0ac3af<sub></sub>
 
 The archive the above architecture, the following technology stack was employed:
 * WebAPI using .NET Core
@@ -338,6 +338,7 @@ The following nuget packages are referenced by the Project2.WebAPI project.
 * [Create microservices with .NET and ASP.NET Core](https://docs.microsoft.com/en-us/learn/paths/create-microservices-with-dotnet/)
 * [Build your first microservice with .NET](https://docs.microsoft.com/en-us/learn/modules/dotnet-microservices/)
 * [Automating ASP.NET Core Web API Creation That Communicates With Your Database in 60 Seconds or Less](https://thejpanda.com/2020/08/10/python-automating-asp-net-core-web-api-creation-that-communicates-with-your-database-in-60-seconds-or-less/)
+* [Beginners Guide to Client Server Communication](https://medium.com/@subhangdxt/beginners-guide-to-client-server-communication-8099cf0ac3af)
 ### B. Entity Framework Core
 * [Entity Framework Core in ASP.NET Core 3.1 – Getting Started](https://procodeguide.com/programming/entity-framework-core-in-asp-net-core/)
 * [Getting Started with EF Core](https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/intro?view=aspnetcore-3.1)
