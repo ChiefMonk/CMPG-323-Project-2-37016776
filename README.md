@@ -156,7 +156,7 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Updates or patches an existing category
         * Request: GUID as id and DtoCategory
         * Response: DtoCategory
-     * api/categories/delete/{id} 
+    * api/categories/delete/{id} 
         * Action: DELETE
         * Description: Deletes an existing category if no linked devices
         * Request: GUID as id
@@ -183,17 +183,71 @@ The following are the endpoints exposed by the WebAPI and can be accessed and te
         * Description: Creates a new zone
         * Request: DtoZone
         * Response: DtoZone   
-        * api/categories/update/{id} 
+    * api/categories/update/{id} 
         * Action: PATCH
         * Description: Updates or patches an existing zone
         * Request: GUID as id and DtoZone
         * Response: DtoZone
-     * api/zones/delete/{id} 
+    * api/zones/delete/{id} 
         * Action: DELETE
         * Description: Deletes an existing zone if no linked devices
         * Request: GUID as id
         * Response: Id of the deleted zone
-        
+
+* DeviceController (api/devices)
+    * api/devices/get-all
+        * Action: GET
+        * Description: Gets all devices
+        * Request: GUID as id
+        * Response: IList<DtoDevice>
+    * api/devices/get-all-by-zone/{zoneId}
+        * Action: GET
+        * Description: Gets all devices by zone id
+        * Request: UID as zone id
+        * Response: IList<DtoDevice>
+    * api/devices/get-all-by-category/{categoryId}
+        * Action: GET
+        * Description: Gets all devices by category id
+        * Request: UID as category id
+        * Response: IList<DtoDevice>
+    * api/devices/get/{id} 
+        * Action: GET
+        * Description: Gets a particular device by its id
+        * Request: GUID as id
+        * Response: DtoDevice
+    * api/devices/create 
+        * Action: POST
+        * Description: Creates a new device
+        * Request: DtoDevice
+        * Response: DtoDevice   
+    * api/devices/update/{id} 
+        * Action: PATCH
+        * Description: Updates or patches an existing device
+        * Request: GUID as id and DtoDevice
+        * Response: DtoDevice
+    * api/devices/delete/{id} 
+        * Action: DELETE
+        * Description: Deletes an existing device
+        * Request: GUID as id
+        * Response: Id of the deleted device
+
+* SecurityController (api/security)
+    * api/security/login/{username}/{password}
+        * Action: GET
+        * Description: Logs in a system user - admin or normal user
+        * Request: username and password
+        * Response: DtoUserAuthenticationResponse
+    * api/security/get/{id} 
+        * Action: GET
+        * Description: Gets a particular system user by its id
+        * Request: GUID as id
+        * Response: DtoSystemUser
+    * api/security/get-all-by-zone/{zoneId}
+        * Action: GET
+        * Description: Gets all devices by zone id
+        * Request: UID as zone id
+        * Response: IList<DtoDevice>        
+
 <a name="nuget"></a>
 ## 4. Dependencies
 The following nuget packages are referenced by the Project2.WebAPI project.
