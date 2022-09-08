@@ -126,11 +126,11 @@ The whole solution, named CMPG323.D37016776.Project2.sln, is created using Visua
 
 The WebAPI for this project is deployed at https://cmpg323-37016776-project2-webapi.azurewebsites.net. The WebAPI is documented using Swagger and can be accessed and tested at https://cmpg323-37016776-project2-webapi.azurewebsites.net/swagger/index.html. 
 
-Most of the endpoints require and authenticated admin user. You can follow the following steps to get access:
-* Register as admin user via swagger end point api/security/register/admin
-* Login to get a JWT token via swagger end point api/security/login
+Most of the endpoints require an authenticated admin user. You can use the following steps to get access:
+* Register as an admin user via swagger the endpoint api/security/register/admin
+* Login to get a JWT token via swagger the endpoint api/security/login
 * Add the JWT token to the Authorise option on the swagger page
-* Run and Test any point you want.
+* Run and Test any endpoint and functionality you want.
 
  The following are the endpoints exposed, grouped per applicable controller:
 * CategoryController (api/categories)
