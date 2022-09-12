@@ -6,9 +6,10 @@
 1. [Introduction](#intro) 
 2. [Technology Stack](#tech)
 3. [Project Structure and WebAPI Endpoints](#struc)
-4. [Dependencies](#nuget)
-5. [Contributors](#cont)
-6. [References](#refs)
+4. [Azure API Manager](#apiman)
+5. [Dependencies](#nuget)
+6. [Contributors](#cont)
+7. [References](#refs)
 
 <a name="intro"></a>
 ## 1. Introduction
@@ -309,8 +310,16 @@ Most of the endpoints require an authenticated admin user. You can use the follo
         * Authorize: Yes
         * Roles: Any
 
+<a name="apiman"></a>
+## 4. Azure API Manager
+The image below is a screenshot of the API endpoints under the Azure API manager.
+<img src="api_manager.png" width="95%" style="text-align:center;float:center" />
+
+The image below is a screenshot of a test done under the Azure API manager for the login endpoint, api/security/login/{username}/{password}.
+<img src="api_manager_login_test.png" width="95%" style="text-align:center;float:center" />
+
 <a name="nuget"></a>
-## 4. Dependencies
+## 5. Dependencies
 The following nuget packages are referenced by the Project2.WebAPI project.
 
  | Package  |  Version  |  License  |
@@ -326,11 +335,11 @@ The following nuget packages are referenced by the Project2.WebAPI project.
  | [Swashbuckle.AspNetCore](https://www.nuget.org/packages/Swashbuckle.AspNetCore/6.4.0/)  |  6.4.0  |  [Apache 2.0](https://licenses.nuget.org/Apache-2.0)  |
 
 <a name="cont"></a>
-## 5. Contributors
+## 6. Contributors
 * [Chipo Hamayobe (37016776)](https://github.com/ChiefMonk) - Project Lead
 
 <a name="refs"></a>
-## 6. References
+## 7. References
 ### .NET Core WebAPIs
 * [Tutorial: Create a web API with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api)
 * [Create web APIs with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/web-api)
